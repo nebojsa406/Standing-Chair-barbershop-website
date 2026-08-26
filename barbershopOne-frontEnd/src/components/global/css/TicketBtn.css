@@ -1,0 +1,18 @@
+.ticket-button {
+  position: relative;
+  padding: 16px 26px 16px 44px;
+  border-radius: 2px;
+  background: var(--cream);
+  text-decoration: none;
+  font-size: 18px;
+  color: var(--ink);
+  overflow: hidden;
+  mask-image: radial-gradient(circle 10px at 0px center, transparent 8px, black 9px 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.ticket-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(241, 232, 218, 0.5);
+}

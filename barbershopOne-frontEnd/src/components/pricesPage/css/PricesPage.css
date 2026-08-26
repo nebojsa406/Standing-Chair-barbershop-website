@@ -1,0 +1,126 @@
+:root {
+    --ink: #12100D;
+    --panel: #1C1712;
+    --walnut: #2E2119;
+    --brass: #C79A5C;
+    --brass-bright: #E4BC80;
+    --brass-dim: #7A5B34;
+    --cream: #F1E8DA;
+    --taupe: #9C8C79;
+    --hair: rgba(199, 154, 92, 0.438);
+    --maxw: 1180px;
+}
+.prices-page {
+    background-color: var(--ink);
+    color: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 3rem;
+}
+
+.prices-page-inner {
+    width: min(100%, var(--maxw));
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.prices-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.prices-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--cream);
+}
+
+.prices-section-heading .section-number {
+    color: var(--brass);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.35rem;
+    text-transform: uppercase;
+}
+
+.prices-section-heading h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 26px;
+    margin: 0;
+    color: var(--cream);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-color: #5f471e;
+    text-decoration-thickness: 1px;
+}
+
+.price-card {
+    width: 100%;
+    padding: 2rem;
+    border-bottom: 1px solid var(--hair);
+}
+
+.price-card h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 17.5px;
+    margin: 0 0 6px;
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price-card-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0.5rem 0;
+}
+
+.price-label {
+    margin: 0;
+    color: var(--brass-dim);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.17rem;
+}
+
+.price-value {
+    margin: 0;
+    color: var(--brass);
+    font-family: 'Space Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 400;
+}
+
+.price-description {
+    margin: 1.5rem 0 0;
+    color: var(--taupe);
+    line-height: 1.75;
+    font-family: 'Work Sans', sans-serif;
+}
+
+.prices-booking-btn-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 880px) {
+    .prices-page {
+        padding: 36px 1.5rem;
+    }
+
+    .price-card {
+        padding: 1.75rem;
+    }
+}

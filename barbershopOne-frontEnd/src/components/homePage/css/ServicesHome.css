@@ -1,0 +1,143 @@
+:root {
+    --ink: #12100D;
+    --panel: #1C1712;
+    --walnut: #2E2119;
+    --brass: #C79A5C;
+    --brass-bright: #E4BC80;
+    --brass-dim: #7A5B34;
+    --cream: #F1E8DA;
+    --taupe: #9C8C79;
+    --hair: rgba(199, 154, 92, 0.438);
+    --maxw: 1180px;
+}
+
+.servicesHome {
+    background: var(--ink);
+    color: #f1e8da;
+    padding: 4rem 10%;
+}
+
+.servicesHome-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: flex-start;
+    max-width: 1180px;
+    margin: 0 auto 40px;
+    width: 100%;
+}
+
+.servicesHome-eyebrow {
+    margin: 0 0 1rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: #c79a5c;
+}
+
+.servicesHome-title {
+    margin: 0;
+    color: var(--cream);
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    font-family: 'Fraunces', serif;
+}
+
+.servicesHome-copy {
+    margin: 0;
+    color: rgba(131, 118, 102, 0.8);
+    line-height: 1.6;
+    max-width: 34ch;
+    font-size: 14.5px;
+    font-weight: 300;
+    font-family: 'Work Sans';
+}
+
+.servicesHome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+    max-width: 1180px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.serviceCard {
+    background: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    padding: 30px 26px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.0rem;
+}
+
+.serviceCard-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--brass-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+}
+
+.serviceCard-title {
+    margin: 0 0 10px;
+    font-size: 23px;
+    color: var(--cream);
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+}
+
+.serviceCard-description {
+    margin: 0;
+    color: #b8a98d;
+    line-height: 1.85;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.98rem;
+}
+
+.serviceCard-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 18px;
+    border-top: 1px dashed rgba(199,154,92, 0.2);
+}
+
+.serviceCard-price {
+    color: #c79a5c;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.serviceCard-link {
+    color: var(--taupe);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.serviceCard-link:hover {
+    color: #e4bc80;
+}
+
+@media (max-width: 960px) {
+    .servicesHome-intro {
+        grid-template-columns: 1fr;
+    }
+
+    .servicesHome-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .servicesHome {
+        padding: 3rem 1.5rem 4rem;
+    }
+}

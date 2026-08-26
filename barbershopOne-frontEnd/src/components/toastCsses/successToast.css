@@ -1,0 +1,16 @@
+.Toastify__toast.successToast {
+  background: #1C1712;
+  color: #C79A5C;
+  border-radius: 12px;
+}
+.Toastify__progress-bar.successProgress {
+  background: #d6b41c !important;
+}
+.Toastify__progress-bar--bg {
+  background: #1C1712 !important;
+}
+
+.Toastify__toast.successToast .Toastify__close-button {
+  color: #F4E7D0;
+  opacity: 1;
+}

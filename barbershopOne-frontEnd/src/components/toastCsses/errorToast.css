@@ -1,0 +1,15 @@
+.Toastify__toast.errorToast {
+  background: #1C1712;
+  color: #ee7220;
+}
+.Toastify__progress-bar.errorProgress {
+  background: #d4371b !important;
+}
+.Toastify__progress-bar--bg {
+  background: #1C1712 !important;
+}
+
+.Toastify__toast.errorToast .Toastify__close-button {
+  color: #F4E7D0;
+  opacity: 1;
+}

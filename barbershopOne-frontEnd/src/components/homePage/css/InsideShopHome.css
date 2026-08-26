@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700&display=swap');
+
+:root {
+  --ink: #12100D;
+  --panel: #1C1712;
+  --walnut: #2E2119;
+  --brass: #C79A5C;
+  --brass-bright: #E4BC80;
+  --brass-dim: #7A5B34;
+  --cream: #F1E8DA;
+  --taupe: #9C8C79;
+  --hair: rgba(199, 154, 92, 0.438);
+  --maxw: 1180px;
+}
+
+.insideShopHome {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 4rem 10%;
+}
+
+.insideShopHome-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  display: grid;
+  gap: 2.75rem;
+}
+
+.insideShopHome-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.insideShopHome-eyebrow {
+  margin: 0 0 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--brass);
+}
+
+.insideShopHome-title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.05;
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+}
+
+.insideShopHome-copy {
+  margin: 0;
+  color: #a3927d;
+  line-height: 1.85;
+  font-size: 0.85rem;
+  font-family: 'Work Sans', sans-serif;
+  max-width: 28rem;
+}
+
+.insideShopHome-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+  grid-auto-rows: minmax(240px, auto);
+}
+
+.insideShopHome-card {
+  border: 1px solid rgba(172, 124, 85, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  min-height: 240px;
+}
+
+.insideShopHome-card:first-child {
+  grid-row: span 2;
+}
+
+.insideShopHome-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.insideShopHome-link {
+  justify-self: center;
+  display: inline-flex;
+  text-decoration: none;
+  color: var(--cream);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding-bottom: 2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.insideShopHome-link:hover {
+  color: var(--brass-bright);
+  border-color: var(--brass-bright);
+}
+
+@media (max-width: 960px) {
+  .insideShopHome-header {
+    grid-template-columns: 1fr;
+  }
+
+  .insideShopHome-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .insideShopHome {
+    padding: 3rem 1.5rem;
+  }
+}
+
