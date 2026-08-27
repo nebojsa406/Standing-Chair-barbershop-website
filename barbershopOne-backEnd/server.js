@@ -41,9 +41,9 @@ app.use("/appointments", appointmentRoutes);
 const userRoutes = require("./routes/userRoutes");
 app.use("/user", userRoutes);
 
-//price routes
-const priceRoutes = require("./routes/prices");
-app.use("/prices", priceRoutes);
+//service routes
+const serviceRoutes = require("./routes/servicesRoutes");
+app.use("/services", serviceRoutes);
 
 
 app.use(notFoundHandler);

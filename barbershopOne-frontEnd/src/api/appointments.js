@@ -11,20 +11,11 @@ export const getTimes = async () => {
 
 //post
 export const postAppointment = async (appointmentBody) => {
-    const postBody = {
-        fullname: appointmentBody.fullname,
-        phone: appointmentBody.phone,
-        email: appointmentBody.email,
-        service: appointmentBody.service,
-        time: appointmentBody.time,
-        date: appointmentBody.date,
-        details: appointmentBody.details
-    }
 
     const res = await fetch(API_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(postBody)
+        body: JSON.stringify(appointmentBody)
     });
 
     const resData = await res.json();

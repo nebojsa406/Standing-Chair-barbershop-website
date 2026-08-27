@@ -1,14 +1,15 @@
 import "../css/PricesPage.css";
 import { TicketBtn } from "../../global/jsx/TicketBtn.jsx";
-import {useState} from "react"
+import { useState, useEffect } from "react"
+import { getServices } from "../../../api/services.js"
 
-function PriceCard({ name, price, time, description }) {
+function ServiceCard({ name, service, time, description }) {
     return (
         <div className="price-card">
             <h4>{name}</h4>
             <div className="price-card-meta">
-                <p className="price-label">Price</p>
-                <p className="price-value">{price}</p>
+                <p className="price-label">service</p>
+                <p className="price-value">{service}</p>
             </div>
             <div className="price-card-meta">
                 <p className="price-label">Time</p>
@@ -20,14 +21,16 @@ function PriceCard({ name, price, time, description }) {
 }
 
 export function PricesPage() {
-    const [prices, setPrices] = useState();
-    useEffect(()=> {
-        (async()=>{
+    const [services, setServices] = useState([]);
+
+    useEffect(() => {
+        (async () => {
             try {
-                
+                const data = await getServices();
+                setServices(data.services);
             } catch (err) {
-                
-            }   
+                return new Error("Error: ", err.message);
+            }
         })();
     }, []);
 
@@ -40,12 +43,15 @@ export function PricesPage() {
                         <h3>Haircuts</h3>
                     </div>
 
-                    <PriceCard
-                        name="Signature Haircut"
-                        price="7€"
-                        time="30 min"
-                        description="Consultation, wash, precision cut and finish. Scissor or clipper, your call."
-                    />
+                    {services.filter((item) => item.category === "haircut").map((service) =>
+                        <ServiceCard
+                            key={service.name}
+                            name={service.name}
+                            service={service.service}
+                            time={service.time}
+                            description="Consultation, wash, precision cut and finish. Scissor or clipper, your call."
+                        />
+                    )}
                 </section>
 
                 <section className="prices-section">
@@ -54,12 +60,15 @@ export function PricesPage() {
                         <h3>Beard & Shave</h3>
                     </div>
 
-                    <PriceCard
-                        name="Beard Sculpt & Line-up"
-                        price="15€"
-                        time="30 min"
-                        description="Shape, trim and hot towel finish, plus a straight razor edge line-up."
-                    />
+                    {services.filter((item) => item.category === "beard").map((service) =>
+                        <ServiceCard
+                            key={service.name}
+                            name={service.name}
+                            service={service.service}
+                            time={service.time}
+                            description="Consultation, wash, precision cut and finish. Scissor or clipper, your call."
+                        />
+                    )}
                 </section>
                 <div className="prices-booking-btn-wrap">
                     <TicketBtn text="Book your chair →" href="/book" />

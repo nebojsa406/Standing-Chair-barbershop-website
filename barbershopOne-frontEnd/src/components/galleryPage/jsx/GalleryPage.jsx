@@ -10,7 +10,7 @@ export function GalleryPage() {
             <div className="galleryPage-header-wrap">
                 <p className="galleryPage-label">GALLERY</p>
                 <h1 className="galleryPage-title">The shop, framed for every visit.</h1>
-                <p className="galleryPage-subtitle">A curated view of our space, light, and detail—crafted to feel effortless and inviting.</p>
+                <p className="galleryPage-subtitle">A curated view of our space, light, and detail.Crafted to feel effortless and inviting.</p>
             </div>
 
             <div className="galleryPage-btn-wrap">

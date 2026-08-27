@@ -7,19 +7,19 @@ const User = require("../models/user");
 const browseLimiter = rateLimit({
     windowMs: 30 * 1000, // time window: 30sec, in milliseconds
     max: 90,
-    message: { message: "too many attempts, try again later" }
+    message: "too many attempts, try again later"
 });
 
 const crudLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // time window: 15min, in milliseconds
     max: 5,
-    message: { message: "too many attempts, try again later" }
+    message: "too many attempts, try again later"
 });
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // time window: 15min, in milliseconds
     max: 5,
-    message: { message: "too many attempts, try again later" }
+    message: "too many attempts, try again later"
 });
 
 function createTokens(user) {

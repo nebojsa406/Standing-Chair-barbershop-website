@@ -102,7 +102,7 @@ export function AppointmentsPage() {
         
         const res = await postAppointment(appointmentBody);
 
-        if (res.status >= 200 && 400) {
+        if (res.status > 300) {
             notify(`ERROR: ${res.data.message}`, {className: "errorToast", progressClassName: "errorProgress" } );
             throw new Error(`ERROR: ${res.data.message}`);
         }
