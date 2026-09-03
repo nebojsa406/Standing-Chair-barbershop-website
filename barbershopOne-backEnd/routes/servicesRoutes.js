@@ -14,7 +14,6 @@ router.get("/", browseLimiter, async(req, res) => {
         const services = await ServiceCard.find();
         if (services.length === 0) return res.status(200).json({message: "no services found, list of services is empty"});
         res.status(200).json({services});
-        console.log(services);
     } catch (err) {
         throw err;
     }
@@ -58,7 +57,7 @@ router.patch("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async(r
     }
 });
 
-//deleteserviceCard
+//delete serviceCard
 router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async(req, res) => {
     try {
         const serviceCard = await ServiceCard.findByIdAndDelete(req.params.id);

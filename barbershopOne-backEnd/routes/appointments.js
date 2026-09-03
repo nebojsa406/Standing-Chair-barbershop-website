@@ -9,7 +9,7 @@ const { verifyPhoneFormatMonteNegro } = require("../services/verifyPhoneFormat.j
 //get times
 router.get("/times", browseLimiter, async (req, res) => {
     try {
-        const takenTimes = await Appointment.find({ date: { $gte: new Date() } }, { _id: 0, time: 1 });
+        const takenTimes = await Appointment.find({ date: { $gte: new Date().setHours(0,0,0,0) } }, { _id: 0, time: 1 });
         if (takenTimes.length === 0) return res.status(200).json({ message: "no taken times been found in present or future" });
         res.status(200).json({ takenTimes });
     } catch (err) {
@@ -69,6 +69,28 @@ router.post("/", crudLimiter, async (req, res) => {
 
         if (matchingAppointments.length > 0) {
             return res.status(409).json({message: "An appointment already exists for this phone number."});
+        }
+
+        const now = new Date();
+        let nowTime = now.toLocaleTimeString('sr-ME', { hour: '2-digit', minute: '2-digit' });
+        nowTime = nowTime.replace(":", "");
+        const nowTimeHour = parseInt(nowTime.slice(0,2));
+        const nowTimeMin = parseInt(nowTime.slice(2));
+
+
+        const bodyTime = req.body.time.replace(":", "");
+        if (bodyTime.length !== 4) {
+            return res.status(400).json({message: "bad time field format"})
+        }
+        const appointHour = parseInt(bodyTime.slice(0,2))//16
+        const appointMin = parseInt(bodyTime.slice(2));//:30
+
+        if (appointHour < nowTimeHour) {
+            return res.status(400).json({message: "cant create appointment in past date time"})
+        } else if (appointHour === nowTimeHour) {
+            if(appointMin < nowTimeMin) {
+                return res.status(400).json({message: "cant create appointment in past date time"});
+            }
         }
 
         const newAppointment = await appointment.save();

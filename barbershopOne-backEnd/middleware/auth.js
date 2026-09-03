@@ -27,15 +27,17 @@ function createTokens(user) {
         {
             id: user.id,
             name: user.username,
+            email: user.email,
             role: user.role
-        },//some data that token will hold
+        },
         REFRESH_TOKEN_SECRET,
-        {expiresIn: "14d"}//token is valid for time
+        {expiresIn: "14d"}
     );
     const accessToken = jwt.sign(
         {
             id: user.id,
             name: user.username,
+            email: user.email,
             role: user.role
         },
         ACCESS_TOKEN_SECRET,
@@ -49,6 +51,7 @@ function createAccessToken(user) {
         {
             id: user.id,
             name: user.username,
+            email: user.email,
             role: user.role
         },
         ACCESS_TOKEN_SECRET,
@@ -73,8 +76,10 @@ async function authenticateRefreshToken(req, res, next) {
     try {
         const refreshToken = req.cookies.refreshToken;
         if(!refreshToken) return res.status(401).json({message: "refresh token required"});
+        
         const sessionLookUp = await User.find({"sessions.refreshToken": refreshToken}, {"sessions.$": 1});
         if (sessionLookUp.length === 0) return res.status(401).json({message: "invalid or expired refresh token"});
+
         jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, data) => {
             if(err) return res.status(401).json({message: "invalid or expired refresh token"});
             req.user = data;

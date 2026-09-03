@@ -7,3 +7,7 @@ export const getServices = async () => {
     if (!res.ok) throw new Error('failed to fetch prices');
     return res.json();
 }
+
+
+//------------ADMIN----------\\
+

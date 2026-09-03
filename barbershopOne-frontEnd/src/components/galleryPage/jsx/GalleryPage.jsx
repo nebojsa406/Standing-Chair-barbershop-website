@@ -5,6 +5,7 @@ import { useState } from "react";
 export function GalleryPage() {
     const [buttonActive, setButtonActive] = useState("all");
     const [galleryContent, setGalleryContent] = useState([]);
+
     return (
         <main className="galleryPage">
             <div className="galleryPage-header-wrap">

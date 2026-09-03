@@ -20,7 +20,7 @@ export const postAppointment = async (appointmentBody) => {
 
     const resData = await res.json();
 
-    return {data: resData, status: res.status};
+    return {body: resData, status: res.status};
 }
 //------------ADMIN----------\\
 

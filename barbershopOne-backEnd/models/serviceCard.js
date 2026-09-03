@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const PricingBase = require("twilio/lib/rest/PricingBase");
 
 const serviceSchema = new mongoose.Schema({
     service: {type: String, required: true},

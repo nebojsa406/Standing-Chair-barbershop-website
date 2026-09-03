@@ -45,6 +45,10 @@ app.use("/user", userRoutes);
 const serviceRoutes = require("./routes/servicesRoutes");
 app.use("/services", serviceRoutes);
 
+//service routes
+const locationRoutes = require("./routes/locationRoutes");
+app.use("/location", locationRoutes);
+
 
 app.use(notFoundHandler);
 app.use(errorHandler);

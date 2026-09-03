@@ -3,13 +3,13 @@ import { TicketBtn } from "../../global/jsx/TicketBtn.jsx";
 import { useState, useEffect } from "react"
 import { getServices } from "../../../api/services.js"
 
-function ServiceCard({ name, service, time, description }) {
+function ServiceCard({ name, price, time, description }) {
     return (
         <div className="price-card">
             <h4>{name}</h4>
             <div className="price-card-meta">
-                <p className="price-label">service</p>
-                <p className="price-value">{service}</p>
+                <p className="price-label">price</p>
+                <p className="price-value">{price}</p>
             </div>
             <div className="price-card-meta">
                 <p className="price-label">Time</p>
@@ -47,9 +47,9 @@ export function PricesPage() {
                         <ServiceCard
                             key={service.name}
                             name={service.name}
-                            service={service.service}
+                            price={service.price}
                             time={service.time}
-                            description="Consultation, wash, precision cut and finish. Scissor or clipper, your call."
+                            description={service.description}
                         />
                     )}
                 </section>
@@ -64,9 +64,9 @@ export function PricesPage() {
                         <ServiceCard
                             key={service.name}
                             name={service.name}
-                            service={service.service}
+                            price={service.price}
                             time={service.time}
-                            description="Consultation, wash, precision cut and finish. Scissor or clipper, your call."
+                            description={service.description}
                         />
                     )}
                 </section>

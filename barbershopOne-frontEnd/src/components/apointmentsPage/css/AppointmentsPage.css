@@ -12,7 +12,7 @@
     --maxw: 1180px;
 }
 .appointments-page {
-    background-color: var(--ink);
+    background: radial-gradient(circle at top, var(--walnut), var(--ink) 48%);
     color: var(--cream);
     min-height: 100vh;
     display: flex;
@@ -26,6 +26,11 @@
     flex-direction: column;
     align-items: start;
     justify-content: center;
+    gap: 50px;
+}
+.appointments-page-booking-section form {
+    display: flex;
+    flex-direction: column;
     gap: 50px;
 }
 .appoint-page-title-wrapper {
@@ -54,7 +59,6 @@
     color: var(--cream);
     font-weight: 600;
 }
-
 .appoint-page-select-service-div {
     display: flex;
     flex-direction: column;
@@ -185,6 +189,7 @@
     align-items: start;
     justify-content: center;
     gap: 1rem;
+    margin-bottom: 50px;
 }
 .appoint-page-details-input-div-inner {
     display: flex;
@@ -193,6 +198,10 @@
     justify-content: center;
     gap: 1rem;
     width: 100%;
+}
+.appoint-page-details-input-div-inner input:invalid,
+.appoint-page-date-input:invalid {
+    border-color: #D85C5C;
 }
 .appoint-page-name-phone-wrapper {
     display: flex;
