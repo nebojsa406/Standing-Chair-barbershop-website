@@ -1,4 +1,3 @@
-import { refreshWebsite } from "../App"
 const API_URL = "http://localhost:5000/user"
 
 export async function login(body) {

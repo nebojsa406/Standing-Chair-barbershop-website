@@ -11,8 +11,8 @@ const browseLimiter = rateLimit({
 });
 
 const crudLimiter = rateLimit({
-    windowMs: 5 * 60 * 1000, // time window: 15min, in milliseconds
-    max: 5,
+    windowMs: 3 * 60 * 1000, // time window: 3min, in milliseconds
+    max: 10,
     message: "too many attempts, try again later"
 });
 

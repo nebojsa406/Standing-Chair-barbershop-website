@@ -7,7 +7,7 @@ export function CommentHome() {
         <p className="commentHome-quote">
           “They cut like they’ve got nowhere else to be. That’s rarer than a good haircut.”
         </p>
-        <p className="commentHome-author">— A regular, most Saturdays</p>
+        <p className="commentHome-author">— A regular, most thursday</p>
       </div>
     </section>
   );

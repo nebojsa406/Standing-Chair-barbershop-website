@@ -1,5 +1,7 @@
 import "../css/locationPage.css"
 import { TicketBtn } from "../../global/jsx/TicketBtn";
+import { useState, useEffect } from "react";
+import { getLocation } from "../../../api/location";
 
 function LocationInfoCard({ label, title, description }) {
     return (
@@ -12,6 +14,39 @@ function LocationInfoCard({ label, title, description }) {
 }
 
 export function LocationPage() {
+    const [address, setAddress] = useState("not loaded");
+    const [contactNum, setContactNum] = useState("not loaded");
+    const [contactEmail, setContactEmail] = useState("not loaded");
+    const [workingDays, setWorkingDays] = useState(["day", "day"]);
+    const [notWorkingDays, setNotWorkingDays] = useState(["day", "day"]);
+    const [workingTime, setWorkingTime] = useState(["time", "time"]);
+    const [googleMapsLink, setGoogleMapsLink] = useState(null);
+    const [googleMapsEmbedLink, setGoogleMapsEmbedLink] = useState(null);
+
+    useEffect(() => {
+        const loadLocation = async () => {
+            try {
+                const data = await getLocation();
+                const dataUnwraped = data.services[0];
+
+                setAddress(dataUnwraped.address);
+                setContactNum(dataUnwraped.contactNum);
+                setContactEmail(dataUnwraped.contactEmail);
+                setWorkingDays(dataUnwraped.workingDays);
+                setNotWorkingDays(dataUnwraped.notWorkingDays);
+                setWorkingTime(dataUnwraped.workingTime);
+                setGoogleMapsLink(dataUnwraped.googleMapsLink);
+                setGoogleMapsEmbedLink(dataUnwraped.googleMapsEmbedLink);
+                
+            } catch (error) {
+                console.error("Failed to load location data:", error);
+            }
+        };
+
+        loadLocation();
+    }, []);
+    
+
     return (
         <main className="location-page">
             <div className="location-container">
@@ -20,7 +55,7 @@ export function LocationPage() {
                         <div className="location-section">
                             <div className="location-label">ADDRESS</div>
                             <div className="location-address">
-                                <h2>14 Grafton Lane, ground Floor</h2>
+                                <h2>{address}</h2>
                             </div>
                             <p className="location-note">Buzzer marked Standing Chair come on up.</p>
                         </div>
@@ -29,22 +64,22 @@ export function LocationPage() {
 
                         <div className="location-section">
                             <div className="location-label">HOURS</div>
-                            <p className="location-text">Tue - Fri: 10:00 - 20:00</p>
-                            <p className="location-text">Sat: 09:00 - 18:00</p>
-                            <p className="location-text">Sun - Mon: Closed</p>
+                            <p className="location-text" >{workingDays[0]} - {workingDays[1]}: {workingTime[0]} - {workingTime[1]}</p>
+                            <p className="location-text" >{notWorkingDays[0]} - {notWorkingDays[1]}: Closed</p>
                         </div>
 
                         <div className="location-divider" />
 
                         <div className="location-section">
                             <div className="location-label">CONTACT</div>
-                            <p className="location-text">+1 (555) 019 4482</p>
-                            <p className="location-text">hello@standingchair.shop</p>
+                            <p className="location-text">{contactNum}</p>
+                            <p className="location-text">{contactEmail}</p>
                         </div>
 
                         <TicketBtn
                             text="Get Directions →"
-                            href="https://www.google.com/maps/dir/?api=1&destination=14+Grafton+Lane+Ground+Floor"
+                            href={googleMapsLink}
+                            openInNewTab
                         />
                     </div>
                 </section>
@@ -53,7 +88,7 @@ export function LocationPage() {
                     <div className="map-frame">
                         <iframe
                             title="Barbershop location"
-                            src="https://maps.google.com/maps?q=14%20Grafton%20Lane%20Ground%20Floor&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            src={googleMapsEmbedLink}
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
                         />
@@ -70,17 +105,12 @@ export function LocationPage() {
                     <LocationInfoCard
                         label="PARKING"
                         title="Street & Garage"
-                        description="Metered street parking out front, plus a garage one block east on 5th if it's full."
-                    />
-                    <LocationInfoCard
-                        label="TRANSIT"
-                        title="Nearest Stop"
-                        description="Grafton St. station, 4 minute walk. Exit toward the north side of the platform."
+                        description="Metered street parking west side of building"
                     />
                     <LocationInfoCard
                         label="ACCESS"
-                        title="Second Floor"
-                        description="We're up one flight — no elevator yet. Give us a call and we'll work something out."
+                        title="First Floor"
+                        description="Front building entrance with our bussines name above easy to locate"
                     />
                 </div>
             </section>

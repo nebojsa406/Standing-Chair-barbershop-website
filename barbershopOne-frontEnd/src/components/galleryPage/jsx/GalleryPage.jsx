@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export function GalleryPage() {
     const [buttonActive, setButtonActive] = useState("all");
-    const [galleryContent, setGalleryContent] = useState([]);
 
     return (
         <main className="galleryPage">
@@ -29,11 +28,7 @@ export function GalleryPage() {
             </div>
 
             <section className="galleryPage-content-grid">
-                {galleryContent.length > 0 ?
-                    <p>display content</p>
-                    :
-                    <p className="no-content-msg">no content available</p>
-                }
+                <p className="no-content-msg">no content available</p>
             </section>
         </main>
     );

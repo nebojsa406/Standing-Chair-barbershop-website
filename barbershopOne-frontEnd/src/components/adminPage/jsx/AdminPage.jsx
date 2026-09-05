@@ -4,28 +4,31 @@ import { login } from "../../../api/admin";
 import { logout } from "../../../api/admin";
 import { toast } from "react-toastify";
 
-export function AdminPage({user}) {
-    const notify = (msg, options) => toast(msg, options);
+function LoginForm({ onLogin }) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    let email = undefined;
-    function setEmail(value) { email = value }
-    let password = undefined;
-    function setPassword(value) { password = value }
-    const [newUser, setNewUser] = useState();
-    const displayedUser = newUser === undefined ? user : newUser;
+    async function handleSubmit(event) {
+        event.preventDefault();
+        setIsSubmitting(true);
+        setErrorMessage("");
 
-    function LoginForm() {
-        const [isSubmitted, setIsSubmitted] = useState(false)
-
-        async function handleSubmit(event) {
-            event.preventDefault()
-            setIsSubmitted(true)
+        try {
             const loginData = await login({ email, password });
-            setNewUser(loginData.body.user);
-
+            if (loginData.status >= 300 || !loginData.body?.user) {
+                throw new Error(loginData.body?.message || "Invalid email or password");
+            }
+            onLogin(loginData.body.user);
+        } catch (error) {
+            setErrorMessage(error.message);
+        } finally {
+            setIsSubmitting(false);
         }
+    }
 
-        return <section className="login" aria-labelledby="admin-login-title">
+    return <section className="login" aria-labelledby="admin-login-title">
             <p className="login-kicker">Staff access</p>
             <h1 id="admin-login-title">Welcome back</h1>
             <p className="login-description">Sign in to manage appointments and shop services.</p>
@@ -38,6 +41,7 @@ export function AdminPage({user}) {
                     type="email"
                     placeholder="admin1876@gmail.com"
                     onChange={(e) => setEmail(e.target.value)}
+                    value={email}
                     required
                 />
 
@@ -48,16 +52,19 @@ export function AdminPage({user}) {
                     type="password"
                     placeholder="Enter your password"
                     onChange={(e) => setPassword(e.target.value)}
+                    value={password}
                     required
                 />
 
-                <button type="submit">Sign in</button>
-                {isSubmitted && <p className="login-status" role="status">Credentials ready to verify.</p>}
+                <button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Signing in..." : "Sign in"}
+                </button>
+                {errorMessage && <p className="login-status" role="alert">{errorMessage}</p>}
             </form>
         </section>
-    }
+}
 
-    function UserInfoLogout({ userInfo, onLogout }) {
+function UserInfoLogout({ userInfo, onLogout }) {
         const displayName = userInfo.username || "Staff";
         const displayEmail = userInfo.email || "no email";
         const displayRole = userInfo.role || "user";
@@ -86,17 +93,17 @@ export function AdminPage({user}) {
         );
     }
 
+    export function AdminPage({ user }) {
+        const [newUser, setNewUser] = useState();
+        const displayedUser = newUser === undefined ? user : newUser;
 
-    const handleLogout = async() => {
+        const handleLogout = async () => {
         try {
             setNewUser(null);
-            setEmail("");
-            setPassword("");
-            const logoutData = await logout()
-            notify("SUCCESS: logout", { className: "successToast", progressClassName: "successProgress" });
-            console.log(logoutData)
+                await logout();
+                toast("SUCCESS: logout", { className: "successToast", progressClassName: "successProgress" });
         } catch (error) {
-            throw new Error(`ERROR: failed to logout properly`);
+                toast(`ERROR: ${error.message}`, { className: "errorToast", progressClassName: "errorProgress" });
         }
     };
 
@@ -104,7 +111,7 @@ export function AdminPage({user}) {
         <div className="admin-page">
 
             {!displayedUser ?
-                <LoginForm />
+                <LoginForm onLogin={setNewUser} />
                 :
                 <UserInfoLogout userInfo={displayedUser} onLogout={handleLogout} />
             }

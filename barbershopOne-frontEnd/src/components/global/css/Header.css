@@ -145,15 +145,32 @@
 
 @media (max-width: 800px) {
     .site-nav {
-        display: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        gap: 10px 8px;
     }
 
     .header-inner {
+        flex-wrap: wrap;
         padding: 12px;
     }
 
     .brand-title {
         font-size: 16px
+    }
+
+    .nav-link {
+        text-align: center;
+        padding: 8px 0;
+    }
+
+    .btn-book-wrap-link {
+        grid-column: 1 / -1;
+    }
+
+    .btn-book {
+        width: 100%;
     }
 }
 

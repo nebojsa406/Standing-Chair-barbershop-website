@@ -8,16 +8,13 @@ import { Footer } from '../src/components/global/jsx/Footer.jsx';
 import { PricesPage } from './components/pricesPage/jsx/PricesPage.jsx';
 import { AppointmentsPage } from './components/apointmentsPage/jsx/AppointmentsPage.jsx';
 import { AdminPage } from './components/adminPage/jsx/AdminPage.jsx';
+import { NotFoundPage } from './components/notFoundPage/jsx/NotFoundPage.jsx';
 import './App.css'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import './components/toastCsses/errorToast.css';
 import './components/toastCsses/successToast.css';
 import { refreshTokenLogin } from './api/admin.js';
-
-export function refreshWebsite() {
-  window.location.href = "/"
-}
 
 function App() {
   const [user, setUser] = useState(undefined);
@@ -39,7 +36,7 @@ function App() {
     };
   }, []);
 
-  console.log("app.jsx: userData: ", user)
+  //console.log("app.jsx: userData: ", user)
 
   return (
     <div className="app-shell">
@@ -52,6 +49,7 @@ function App() {
           <Route path="/prices" element={<PricesPage />} />
           <Route path="/book" element={<AppointmentsPage />} />
           <Route path="/admin1876" element={<AdminPage user={user}/>} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <ToastContainer />
       </main>

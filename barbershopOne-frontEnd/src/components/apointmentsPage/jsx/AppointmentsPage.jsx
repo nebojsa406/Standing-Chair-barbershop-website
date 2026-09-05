@@ -4,18 +4,34 @@ import { getTimes, postAppointment } from "../../../api/appointments";
 import { toast } from "react-toastify";
 import { getServices } from "../../../api/services.js"
 
+const TIME_SLOTS = [
+    "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
+    "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+    "16:00", "16:30", "17:00", "17:30", "18:00", "18:30",
+    "19:00", "19:30",
+];
+
+function getLocalDateString(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function getTimeInMinutes(time) {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+}
+
 export function AppointmentsPage() {
-    const notify = (msg, options) => toast(msg, options);
+    const dateToday = getLocalDateString();
+    const currentTimeInMinutes = getTimeInMinutes(
+        `${String(new Date().getHours()).padStart(2, "0")}:${String(new Date().getMinutes()).padStart(2, "0")}`
+    );
 
-    const dateToday = new Date().toISOString().split("T")[0];
-
-    const now = new Date();
-    let nowTime = now.toLocaleTimeString('sr-ME', { hour: '2-digit', minute: '2-digit' });
-    nowTime = nowTime.replace(":", "");
-    nowTime = parseInt(nowTime);
-
-    const [takenTimes, setTakenTimes] = useState();
+    const [takenTimes, setTakenTimes] = useState([]);
     const [services, setServices] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     //appointment data
     const [selectedService, setSelectedService] = useState("");
@@ -27,65 +43,35 @@ export function AppointmentsPage() {
     const [details, setDetails] = useState("");
 
 
-    const [timeSlots, setTimeSlots] = useState([
-        { time: "10:00", available: true },
-        { time: "10:30", available: true },
-        { time: "11:00", available: true },
-        { time: "11:30", available: true },
-        { time: "12:00", available: true },
-        { time: "12:30", available: true },
-        { time: "13:00", available: true },
-        { time: "13:30", available: true },
-        { time: "14:00", available: true },
-        { time: "14:30", available: true },
-        { time: "15:00", available: true },
-        { time: "15:30", available: true },
-        { time: "16:00", available: true },
-        { time: "16:30", available: true },
-        { time: "17:00", available: true },
-        { time: "17:30", available: true },
-        { time: "18:00", available: true },
-        { time: "18:30", available: true },
-        { time: "19:00", available: true },
-        { time: "19:30", available: true },
-    ]);
-
     useEffect(() => {
         (async () => {
             try {
                 const data = await getTimes();
-                if (data && data.takenTimes) {
-                    setTakenTimes(data.takenTimes);
-                    for (let i = 0; i < data.takenTimes.length; i++) {
-                        for (let j = 0; j < timeSlots.length; j++) {
-                            if (data.takenTimes[i].time === timeSlots[j].time) {
-                                timeSlots[j].available = false;
-                                setTimeSlots([...timeSlots]);
-                            }
-                        }
-                    }
-                }
-                for (let i = 0; i < timeSlots.length; i++) {
-                    let timeSlot = timeSlots[i].time.replace(":", "");
-                    timeSlot = parseInt(timeSlot);
-                    if (timeSlot < nowTime) {
-                        timeSlots[i].available = false;
-                        setTimeSlots([...timeSlots]);
-                    }
-                }
+                setTakenTimes(data?.takenTimes ?? []);
                 const serviceData = await getServices();
                 setServices(serviceData.services);
 
             } catch (err) {
                 console.log(err);
-                notify("Failed to load taken times,try again later", { className: "errorToast", progressClassName: "errorProgress" });
+                toast("Failed to load booking information, try again later", { className: "errorToast", progressClassName: "errorProgress" });
             }
         })();
     }, []);
 
+    const timeSlots = TIME_SLOTS.map((time) => {
+        const isTaken = takenTimes.some((appointment) =>
+            appointment.date === selectedDate && appointment.time === time
+        );
+        const isPast = selectedDate === dateToday && getTimeInMinutes(time) < currentTimeInMinutes;
+
+        return { time, available: !isTaken && !isPast };
+    });
+
 
     async function handleConfirmAppointment(event) {
         event.preventDefault();
+
+        if (isSubmitting) return;
 
         const appointmentFields = [
             selectedService,
@@ -95,11 +81,9 @@ export function AppointmentsPage() {
             phone,
         ];
 
-        for (let i = 0; i < appointmentFields.length; i++) {
-            if (!appointmentFields[i] || appointmentFields[i].trim() === "") {
-                notify("ERROR: one or more of required fields is empty", { className: "errorToast", progressClassName: "errorProgress" });
-                throw new Error("1 or more of required fields is empty");
-            }
+        if (appointmentFields.some((field) => !field || field.trim() === "")) {
+            toast("ERROR: one or more required fields is empty", { className: "errorToast", progressClassName: "errorProgress" });
+            return;
         }
 
         const appointmentBody = {
@@ -112,15 +96,28 @@ export function AppointmentsPage() {
             details: details
         }
 
-        const res = await postAppointment(appointmentBody);
+        setIsSubmitting(true);
+        try {
+            const res = await postAppointment(appointmentBody);
 
-        if (res.status > 300) {
-            notify(`ERROR: ${res.body.message}`, { className: "errorToast", progressClassName: "errorProgress" });
-            throw new Error(`ERROR: ${res.body.message}`);
+            if (res.status >= 300) {
+                throw new Error(res.body?.message || "Could not create appointment");
+            }
+
+            toast("SUCCESS: appointment booked", { className: "successToast", progressClassName: "successProgress" });
+            event.currentTarget.reset();
+            setSelectedService("");
+            setSelectedDate("");
+            setSelectedTime("");
+            setFullname("");
+            setPhone("");
+            setEmail("");
+            setDetails("");
+        } catch (error) {
+            toast(`ERROR: ${error.message}`, { className: "errorToast", progressClassName: "errorProgress" });
+        } finally {
+            setIsSubmitting(false);
         }
-
-        notify("SUCCESS", { className: "successToast", progressClassName: "successProgress" });
-        console.log("reservation: ", res.body);
     }
 
     return (
@@ -150,7 +147,16 @@ export function AppointmentsPage() {
 
                     <div className="appoint-page-date-input-div">
                         <p className="appoint-page-eyebrow">CHOOSE A DATE</p>
-                        <input type="date" min={dateToday} onChange={(e) => setSelectedDate(e.target.value)} className="appoint-page-date-input" required />
+                        <input
+                            type="date"
+                            min={dateToday}
+                            onChange={(e) => {
+                                setSelectedDate(e.target.value);
+                                setSelectedTime("");
+                            }}
+                            className="appoint-page-date-input"
+                            required
+                        />
                     </div>
 
                     <div className="appoint-page-time-input-div">
@@ -183,7 +189,9 @@ export function AppointmentsPage() {
                         </div>
                     </div>
 
-                    <button type="submit" className="appoint-page-submit-btn">CONFIRM APPOINTMENT</button>
+                    <button type="submit" className="appoint-page-submit-btn" disabled={isSubmitting}>
+                        {isSubmitting ? "SUBMITTING..." : "CONFIRM APPOINTMENT"}
+                    </button>
                 </form>
             </section>
         </div>

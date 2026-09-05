@@ -17,3 +17,43 @@ body {
 .main-content {
     flex: 1;
 }
+
+.not-found-page {
+    min-height: 60vh;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 12px;
+    padding: 48px 24px;
+    color: #f1e8da;
+    background: #1c1712;
+    text-align: center;
+}
+
+.not-found-page h1,
+.not-found-page p {
+    margin: 0;
+}
+
+.not-found-label {
+    color: #c79a5c;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.16em;
+}
+
+.not-found-page h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+}
+
+.not-found-link {
+    margin-top: 12px;
+    color: #e4bc80;
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.not-found-link:hover {
+    color: #f1e8da;
+}
