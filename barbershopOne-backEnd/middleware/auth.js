@@ -64,7 +64,7 @@ function createAccessToken(user) {
 function authenticateAccessToken(req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    if (!token) return res.status(401).json({message: "authentication required"});
+    if (!token || token === "undefined") return res.status(401).json({message: "authentication required"});
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, data) => {
         if(err) return res.status(401).json({message: "invalid or expired token"});
         req.user = data;

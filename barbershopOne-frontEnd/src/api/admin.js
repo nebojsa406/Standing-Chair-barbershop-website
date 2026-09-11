@@ -31,6 +31,7 @@ export async function refreshTokenLogin() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
     });
-    const resData = await res.json();
-    return resData
+    const data = await res.json();
+    if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
+    return data;
 }

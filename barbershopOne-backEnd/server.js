@@ -45,9 +45,13 @@ app.use("/user", userRoutes);
 const serviceRoutes = require("./routes/servicesRoutes");
 app.use("/services", serviceRoutes);
 
-//service routes
+//location routes
 const locationRoutes = require("./routes/locationRoutes");
 app.use("/location", locationRoutes);
+
+//gallery routes
+// const galleryRoutes = require("./routes/galleryRoutes");
+// app.use("/gallery", galleryRoutes);
 
 
 app.use(notFoundHandler);

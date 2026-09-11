@@ -37,7 +37,7 @@ function App() {
   }, []);
 
   //console.log("app.jsx: userData: ", user)
-
+  
   return (
     <div className="app-shell">
       <Header />
@@ -46,9 +46,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/location" element={<LocationPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/prices" element={<PricesPage />} />
+          {user ? <Route path="/prices" element={<PricesPage admin={user.role === "admin" ? true : false}/>} />
+          :<Route path="/prices" element={<PricesPage />} />}
           <Route path="/book" element={<AppointmentsPage />} />
-          <Route path="/admin1876" element={<AdminPage user={user}/>} />
+          <Route path="/admin1876" element={<AdminPage user={user} />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <ToastContainer />

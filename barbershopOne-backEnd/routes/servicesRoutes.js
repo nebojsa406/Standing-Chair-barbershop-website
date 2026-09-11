@@ -23,7 +23,7 @@ router.get("/", browseLimiter, async(req, res) => {
 router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, async(req, res) => {
     try {
         const serviceBody = new ServiceCard({
-            service: req.body.service,
+            serviceName: req.body.serviceName,
             price: req.body.price,
             time: req.body.time,
             category: req.body.category,
@@ -41,17 +41,17 @@ router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, async(req, 
 //update serviceCard
 router.patch("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async(req, res) => {
     try {
+        
         if (!req.body || Object.keys(req.body).length === 0) return res.status(400).json({message: "request body is empty"});
-
-        const updateserviceCard = await ServiceCard.findByIdAndUpdate(
+        const updateServiceCard = await ServiceCard.findByIdAndUpdate(
             req.params.id,
             req.body,
             {new: true, runValidators: true}
         );
 
-        if (!updateserviceCard) return res.status(404).json({message: "user not found"});
+        if (!updateServiceCard) return res.status(404).json({message: "user not found"});
 
-        res.status(200).json(updateserviceCard);
+        res.status(200).json(updateServiceCard);
     } catch (err) {
         throw err
     }
