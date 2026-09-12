@@ -8,7 +8,7 @@ const TIME_SLOTS = [
     "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
     "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
     "16:00", "16:30", "17:00", "17:30", "18:00", "18:30",
-    "19:00", "19:30",
+    "19:00", "19:30"
 ];
 
 function getLocalDateString(date = new Date()) {
@@ -31,7 +31,6 @@ export function AppointmentsPage() {
 
     const [takenTimes, setTakenTimes] = useState([]);
     const [services, setServices] = useState([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     //appointment data
     const [selectedService, setSelectedService] = useState("");
@@ -59,19 +58,25 @@ export function AppointmentsPage() {
     }, []);
 
     const timeSlots = TIME_SLOTS.map((time) => {
-        const isTaken = takenTimes.some((appointment) =>
-            appointment.date === selectedDate && appointment.time === time
-        );
-        const isPast = selectedDate === dateToday && getTimeInMinutes(time) < currentTimeInMinutes;
+        const timeSlot = getTimeInMinutes(time);
 
-        return { time, available: !isTaken && !isPast };
+        for (const takenTime of takenTimes) {
+
+            if (selectedDate && selectedDate !== "" && selectedDate === takenTime.date.slice(0, 10)) {
+
+                if (time === takenTime.time) return { time: time, available: false }
+
+            }
+        }
+        
+        if (selectedDate === dateToday && currentTimeInMinutes > timeSlot) return { time: time, available: false }
+
+        return { time: time, available: true }
     });
 
 
     async function handleConfirmAppointment(event) {
         event.preventDefault();
-
-        if (isSubmitting) return;
 
         const appointmentFields = [
             selectedService,
@@ -96,28 +101,7 @@ export function AppointmentsPage() {
             details: details
         }
 
-        setIsSubmitting(true);
-        try {
-            const res = await postAppointment(appointmentBody);
-
-            if (res.status >= 300) {
-                throw new Error(res.body?.message || "Could not create appointment");
-            }
-
-            toast("SUCCESS: appointment booked", { className: "successToast", progressClassName: "successProgress" });
-            event.currentTarget.reset();
-            setSelectedService("");
-            setSelectedDate("");
-            setSelectedTime("");
-            setFullname("");
-            setPhone("");
-            setEmail("");
-            setDetails("");
-        } catch (error) {
-            toast(`ERROR: ${error.message}`, { className: "errorToast", progressClassName: "errorProgress" });
-        } finally {
-            setIsSubmitting(false);
-        }
+        postAppointment(appointmentBody);
     }
 
     return (
@@ -189,8 +173,8 @@ export function AppointmentsPage() {
                         </div>
                     </div>
 
-                    <button type="submit" className="appoint-page-submit-btn" disabled={isSubmitting}>
-                        {isSubmitting ? "SUBMITTING..." : "CONFIRM APPOINTMENT"}
+                    <button type="submit" className="appoint-page-submit-btn">
+                        CONFIRM APPOINTMENT
                     </button>
                 </form>
             </section>

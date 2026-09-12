@@ -14,17 +14,18 @@ export function GalleryPage() {
             </div>
 
             <div className="galleryPage-btn-wrap">
-                <button className={buttonActive === "all" ? "filter-btn-active" : "filter-btn"}
-                    onClick={() => setButtonActive("all")}>ALL</button>
+                <button className={buttonActive === "all" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("all")}>
+                    ALL
+                </button>
 
-                <button className={buttonActive === "interior" ? "filter-btn-active" : "filter-btn"}
-                    onClick={() => setButtonActive("interior")}>INTERIOR</button>
+                <button className={buttonActive === "interior" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("interior")}>
+                    INTERIOR
+                </button>
 
-                <button className={buttonActive === "exterior" ? "filter-btn-active" : "filter-btn"}
-                    onClick={() => setButtonActive("exterior")}>EXTERIOR</button>
+                <button className={buttonActive === "exterior" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("exterior")}>
+                    EXTERIOR
+                </button>
 
-                <button className={buttonActive === "videos" ? "filter-btn-active" : "filter-btn"}
-                    onClick={() => setButtonActive("videos")}>VIDEOS</button>
             </div>
 
             <section className="galleryPage-content-grid">

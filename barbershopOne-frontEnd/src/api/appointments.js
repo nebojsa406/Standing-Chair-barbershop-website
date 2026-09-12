@@ -1,4 +1,6 @@
 const API_URL = "http://localhost:5000/appointments"
+import { toast } from "react-toastify";
+
 
 //------------CLIENT----------\\
 
@@ -14,13 +16,16 @@ export const postAppointment = async (appointmentBody) => {
 
     const res = await fetch(API_URL, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(appointmentBody)
     });
+    const data = await res.json();
 
-    const resData = await res.json();
+    if (!res.ok) toast("Failed to create appointment", { className: "errorToast", progressClassName: "errorProgress" });
+    if (!res.ok) throw new Error(`failed to create appointment,with error: ${data.message}`);
 
-    return {body: resData, status: res.status};
+    toast("SUCCESS, appointment made!", { className: "successToast", progressClassName: "successProgress" });
+    return data;
 }
 //------------ADMIN----------\\
 
