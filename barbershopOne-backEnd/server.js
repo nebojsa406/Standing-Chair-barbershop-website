@@ -50,8 +50,8 @@ const locationRoutes = require("./routes/locationRoutes");
 app.use("/location", locationRoutes);
 
 //gallery routes
-// const galleryRoutes = require("./routes/galleryRoutes");
-// app.use("/gallery", galleryRoutes);
+const galleryRoutes = require("./routes/galleryRoutes");
+app.use("/gallery", galleryRoutes);
 
 
 app.use(notFoundHandler);

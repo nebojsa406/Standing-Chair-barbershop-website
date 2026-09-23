@@ -115,12 +115,113 @@
     position: relative;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-content: center;
     gap: 20px;
     min-height: 560px;
     overflow-y: auto;
     background-color: var(--panel);
     padding: 0 6%;
     border: 1px solid var(--hair);
+}
+
+.gallery-admin-actions {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+    display: flex;
+    gap: 8px;
+}
+
+.gallery-add-btn,
+.gallery-submit-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    background: var(--brass);
+    border: 1px solid var(--brass-bright);
+    border-radius: 2px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+.gallery-add-btn:hover,
+.gallery-add-btn:focus-visible,
+.gallery-submit-btn:hover,
+.gallery-submit-btn:focus-visible {
+    color: var(--cream);
+    background: var(--walnut);
+    outline: none;
+}
+
+.gallery-upload-zone {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    margin: 62px 2% 24px;
+    border: 1px dashed var(--brass-dim);
+    background: rgba(18, 16, 13, 0.45);
+    transition: border-color .2s ease, background-color .2s ease;
+}
+
+.gallery-upload-zone.is-dragging {
+    border-color: var(--brass-bright);
+    background: rgba(199, 154, 92, 0.12);
+}
+
+.gallery-file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.gallery-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 30px;
+    color: var(--brass-bright);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-align: center;
+    cursor: pointer;
+}
+
+.gallery-upload-label span {
+    color: var(--taupe);
+    letter-spacing: 0.06em;
+}
+
+.gallery-photo-card {
+    min-width: 0;
+    align-self: center;
+    margin: 0;
+    border: 1px solid var(--hair);
+    background: var(--ink);
+}
+
+.gallery-photo-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.gallery-photo-card figcaption {
+    overflow: hidden;
+    padding: 10px 12px;
+    color: var(--taupe);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .no-content-msg {

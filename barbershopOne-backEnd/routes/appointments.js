@@ -3,7 +3,6 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Appointment = require("../models/appointment");
 const { browseLimiter, crudLimiter, authenticateAccessToken, requireAdmin } = require("../middleware/auth");
-const { validatePhoneNumber } = require('../services/twilio.js');
 const { verifyPhoneFormatMonteNegro } = require("../services/verifyPhoneFormat.js");
 
 //get times
@@ -13,7 +12,36 @@ router.get("/times", browseLimiter, async (req, res) => {
         if (takenTimes.length === 0) return res.status(200).json({ message: "no taken times been found in present or future" });
         res.status(200).json({ takenTimes });
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
+    }
+});
+
+//get user appointment by phone num
+router.get("/byPhone", crudLimiter, async (req, res) => {
+    try {
+        const phone = req.query.phone;
+        const todayDate = new Date();
+        const todayTime = [new Date().getHours(), new Date().getMinutes()];
+        todayDate.setUTCHours(0, 0, 0, 0);
+        if (!phone) return res.status(400).json({ message: "no phone number sent over" });
+        const cleaned = phone.replace(/[^\d]/g, '');
+
+        const appointments = await Appointment.find({ phone: cleaned, date: { $gte: todayDate } });
+
+        for (const appointment of appointments) {
+            const time = appointment.time.split(":");
+            time[0] = Number(time[0]);
+            time[1] = Number(time[1]);
+
+            if (todayTime[0] >= time[0] && todayTime[1] > time[1]) {
+                return res.status(404).json({ message: "no appointments in future dates found for this phone number" });
+            }
+        }
+
+        if (appointments.length === 0) return res.status(404).json({ message: "no appointments found for this phone number" });
+        res.status(200).json({ appointments });
+    } catch (err) {
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -23,7 +51,7 @@ router.get("/", crudLimiter, authenticateAccessToken, requireAdmin, async (req, 
         const appointments = await Appointment.find();
         res.status(200).json(appointments);
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -37,7 +65,7 @@ router.get("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (re
         if (!appointment) return res.status(404).json({ message: "appointment not found" });
         res.status(200).json(appointment);
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -98,7 +126,7 @@ router.post("/", crudLimiter, async (req, res) => {
         const newAppointment = await appointment.save();
         res.status(201).json(newAppointment);
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -125,7 +153,7 @@ router.patch("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (
         if (!newAppointment) return res.status(404).json({ message: "appointment not found" });
         res.status(200).json({ message: "item updated", item: newAppointment });
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -139,7 +167,7 @@ router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async 
         if (!appointment) return res.status(404).json({ message: "appointment not found" });
         res.status(200).json({ message: "deleted item successfully", item: appointment });
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 

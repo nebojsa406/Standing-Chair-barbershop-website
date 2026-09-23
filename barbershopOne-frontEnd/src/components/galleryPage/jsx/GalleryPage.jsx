@@ -1,9 +1,16 @@
 import "../css/GalleryPage.css";
 import { useState } from "react";
+import { AdminContentPanel } from "./AdminContentPanel.jsx";
 
+function ContentPanel() {
+    return (
+        <p className="no-content-msg">no content available</p>
+    );
+}
 
-export function GalleryPage() {
+export function GalleryPage({ admin = true }) {
     const [buttonActive, setButtonActive] = useState("all");
+    const [gallery, setGallery] = useState([]);
 
     return (
         <main className="galleryPage">
@@ -29,7 +36,7 @@ export function GalleryPage() {
             </div>
 
             <section className="galleryPage-content-grid">
-                <p className="no-content-msg">no content available</p>
+                {admin ? <AdminContentPanel gallery={gallery} setGallery={setGallery} /> : <ContentPanel />}
             </section>
         </main>
     );

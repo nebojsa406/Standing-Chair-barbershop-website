@@ -11,7 +11,7 @@ router.get("/", browseLimiter, async(req, res) => {
         if (services.length === 0) return res.status(200).json({message: "no services found, list of services is empty"});
         res.status(200).json({services});
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -57,7 +57,7 @@ router.patch("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async(r
 
         res.status(200).json(locationCard);
     } catch (err) {
-        throw err;
+        res.status(500).json({ message: "server error" });
     }
 });
 
