@@ -1,6 +1,6 @@
 import "../css/AppointmentsPage.css"
 import { useState, useEffect } from "react";
-import { getTimes, postAppointment, getByPhone, getByDate, getAll } from "../../../api/appointments";
+import { getTimes, postAppointment, getByPhone } from "../../../api/appointments";
 import { toast } from "react-toastify";
 import { getServices } from "../../../api/services.js"
 import { AdminAppointmentPanel } from "./AdminAppointmentPanel.jsx";
@@ -26,7 +26,7 @@ function getTimeInMinutes(time) {
     return hours * 60 + minutes;
 }
 
-export function AppointmentsPage() {
+export function AppointmentsPage(admin = true) {
     const dateToday = getLocalDateString();
     const currentTimeInMinutes = getTimeInMinutes(
         `${String(new Date().getHours()).padStart(2, "0")}:${String(new Date().getMinutes()).padStart(2, "0")}`
@@ -53,9 +53,6 @@ export function AppointmentsPage() {
 
     //admin panel data
     const [showAdminPanel, setShowAdminPanel] = useState(false);
-    const [apcDate, setApcDate] = useState("");
-    const [appointmentsAdmin, setAppointmentsAdmin] = useState([]);
-    const [adminSelectedCard, setAdminSelectedCard] = useState("");
 
 
 
@@ -149,18 +146,7 @@ export function AppointmentsPage() {
         }
     }
 
-    async function handleAdminSearch() {
-        if (apcDate !== "") {
-            const data = await getByDate(apcDate);
-            const appointments = Array.isArray(data) ? data : data?.appointments;
-            setAppointmentsAdmin(Array.isArray(appointments) ? appointments : []);
-            setApcDate("");
-        } else {
-            const data = await getAll();
-            const appointments = Array.isArray(data) ? data : data?.appointments;
-            setAppointmentsAdmin(Array.isArray(appointments) ? appointments : []);
-        }
-    }
+
 
     function dateComparison(dateA, dateB) {//is date A bigger then date B
         if (dateA >= dateB) {
@@ -171,24 +157,19 @@ export function AppointmentsPage() {
 
     return (
         <div className="appointments-page">
-            <button
-                type="button"
-                className={`admin-panel-toggle-btn ${showAppointmentSearch ? "admin-toggle-search-open" : ""}`}
-                onClick={handleToggleAdminPanel}
-            >
-                {showAdminPanel ? "close admin panel" : "open admin panel"}
-            </button>
-            {showAdminPanel &&
-                <AdminAppointmentPanel
-                    appointmentsAdmin={appointmentsAdmin}
-                    handleAdminSearch={handleAdminSearch}
-                    apcDate={apcDate}
-                    setApcDate={setApcDate}
-                    setAdminSelectedCard={setAdminSelectedCard}
-                    adminSelectedCard={adminSelectedCard}
-                    dateComparison={dateComparison}
-                    dateToday={dateToday}
-                />
+            {admin === true &&
+                <button
+                    type="button"
+                    className={`admin-panel-toggle-btn ${showAppointmentSearch ? "admin-toggle-search-open" : ""}`}
+                    onClick={handleToggleAdminPanel}
+                >
+                    {showAdminPanel ? "close admin panel" : "open admin panel"}
+                </button>
+            }
+
+            {showAdminPanel && admin === true ?
+                <AdminAppointmentPanel dateComparison={dateComparison} dateToday={dateToday} />
+                : <></>
             }
 
             {showAppointmentSearch && (
@@ -246,10 +227,10 @@ export function AppointmentsPage() {
                                 <button
                                     key={index}
                                     type="button"
-                                    className={selectedService === service.name ? "service-btn-selected" : "service-btn"}
-                                    onClick={() => setSelectedService(service.name)}
+                                    className={selectedService === service.serviceName ? "service-btn-selected" : "service-btn"}
+                                    onClick={() => setSelectedService(service.serviceName)}
                                 >
-                                    {service.name} <span className="service-price">{service.price}</span>
+                                    {service.serviceName} <span className="service-price">{service.price}</span>
                                 </button>
                             ))}
                         </div>

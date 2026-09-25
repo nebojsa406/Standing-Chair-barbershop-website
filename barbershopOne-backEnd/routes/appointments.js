@@ -68,7 +68,7 @@ router.get("/byPhone", crudLimiter, async (req, res) => {
 });
 
 //get all
-router.get("/", crudLimiter, authenticateAccessToken, requireAdmin, async (req, res) => {
+router.get("/", browseLimiter, authenticateAccessToken, requireAdmin, async (req, res) => {
     try {
         const appointments = await Appointment.find();
         res.status(200).json(appointments);
@@ -78,11 +78,13 @@ router.get("/", crudLimiter, authenticateAccessToken, requireAdmin, async (req, 
 });
 
 //get by date
-router.get("/byDate", crudLimiter, authenticateAccessToken, requireAdmin, async(req, res) => {
+router.get("/byDate", browseLimiter,authenticateAccessToken, requireAdmin, async(req, res) => {
     try {
-        const argDate = req.query.date.replace(" 00:00", "+00:00");
+        const toggleFrom = req.query.toggleFrom === "true";
+        const argDate = req.query.date.replace(" ", "T").replace(/(\+00:00)?$/, "Z");
         const date = new Date(argDate);
-        const appointments = await Appointment.find({date: date});
+        const appointments = toggleFrom === true ? await Appointment.find({date: {$gte: date } } ) : await Appointment.find({date: date});
+        if (appointments.length === 0) return res.status(404).json({message: "no appointments found (backend 404)"});
         res.status(200).json(appointments);
     } catch (err) {
         res.status(500).json({ message: "server error"});

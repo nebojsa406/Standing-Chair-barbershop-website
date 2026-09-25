@@ -1,28 +1,71 @@
-export function AdminAppointmentPanel({
-    appointmentsAdmin = [],
-    handleAdminSearch,
-    apcDate = "",
-    setApcDate,
-    setAdminSelectedCard,
-    adminSelectedCard = "",
-    dateComparison,
-    dateToday,
-}) {
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { deleteOne, getByDate, getAll } from "../../../api/appointments";
+
+
+export function AdminAppointmentPanel( { dateComparison, dateToday } ) {
+    const [startFromDate, setStartFromDate] = useState(false);
+    const [appointmentsAdmin, setAppointmentsAdmin] = useState([]);
+    const [apcDate, setApcDate] = useState("");
+    const [adminSelectedCard, setAdminSelectedCard] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    async function handleAdminSearch() {
+        if (startFromDate && !apcDate) {
+            toast("Choose a date to search appointments from", { className: "errorToast", progressClassName: "errorProgress" });
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            const data = apcDate ? await getByDate(apcDate, startFromDate) : await getAll();
+            const appointments = Array.isArray(data) ? data : data?.appointments;
+
+            if (!Array.isArray(appointments)) {
+                throw new Error("Unexpected appointment search response");
+            }
+
+            setAppointmentsAdmin(appointments);
+            setAdminSelectedCard("");
+        } catch (error) {
+            toast(error instanceof Error ? error.message : "Failed to search appointments", { className: "errorToast", progressClassName: "errorProgress" });
+        } finally {
+            setIsSearching(false);
+        }
+    }
+
+    async function handleDelete() {
+        if (!adminSelectedCard) return toast("no appointment card selected!", { className: "errorToast", progressClassName: "errorProgress" });
+
+        setIsDeleting(true);
+        try {
+            await deleteOne(adminSelectedCard);
+            setAppointmentsAdmin((appointments) => appointments.filter((item) => item._id !== adminSelectedCard));
+            setAdminSelectedCard("");
+        } catch (error) {
+            toast(error instanceof Error ? error.message : "Failed to delete appointment", { className: "errorToast", progressClassName: "errorProgress" });
+        } finally {
+            setIsDeleting(false);
+        }
+    }
+
     return (
         <aside className="admin-panel" aria-label="Admin panel">
             <h2>admin panel</h2>
             <p>manage appointments</p>
             <div className="admin-panel-content">
                 <div className="apc-buttons-div">
-                    <button onClick={handleAdminSearch} className="search-appointment-btn">Search</button>
+                    <button onClick={handleAdminSearch} className="search-appointment-btn" disabled={isSearching || isDeleting}>{isSearching ? "Searching..." : "Search"}</button>
+                    <button onClick={() => setStartFromDate(!startFromDate)} className={`search-appointment-btn break-btn-words ${startFromDate ? "search-appointment-btn-on" : ""}`} disabled={isSearching || isDeleting}>all appointments from date:</button>
                     <input
                         type="date"
                         className="appoint-page-date-input"
-                        defaultValue={apcDate !== "" && apcDate}
+                        value={apcDate}
                         onChange={(event) => setApcDate(event.target.value)}
+                        disabled={isSearching || isDeleting}
                     />
-                    <button className="search-appointment-btn">Delete</button>
-                    <button className="search-appointment-btn">Mark as Done</button>
+                    <button onClick={handleDelete} className="search-appointment-btn" disabled={isSearching || isDeleting}>{isDeleting ? "Deleting..." : "Delete"}</button>
                 </div>
                 <div className={`apc-appointments ${appointmentsAdmin.length > 12 ? "has-scroll" : ""} ${appointmentsAdmin.length > 4 ? "has-mobile-scroll" : ""}`}>
 

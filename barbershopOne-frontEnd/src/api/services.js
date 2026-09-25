@@ -27,7 +27,7 @@ export const updateService = async (id, serviceBody) => {
     });
     const data = await res.json();
 
-    if(!res.ok) toast("Failed to update service card", { className: "errorToast", progressClassName: "errorProgress" });
+    if(!res.ok) return toast("Failed to update service card", { className: "errorToast", progressClassName: "errorProgress" });
     if(!res.ok) throw new Error(`failed to update,with error: ${data.message}`);
 
     toast("SUCCESS, refresh page to see changes", { className: "successToast", progressClassName: "successProgress" });
@@ -43,7 +43,7 @@ export const deleteService = async(id) => {
     })
     const data = await res.json();
 
-    if(!res.ok) toast("Failed to delete service card", { className: "errorToast", progressClassName: "errorProgress" });
+    if(!res.ok) return toast("Failed to delete service card", { className: "errorToast", progressClassName: "errorProgress" });
     if(!res.ok) throw new Error(`failed to delete,with error: ${data.message}`);
 
     toast("SUCCESS, refresh page to see changes", { className: "successToast", progressClassName: "successProgress" });
@@ -64,7 +64,7 @@ export const createService = async(serviceBody) => {
     })
     const data = await res.json();
 
-    if(!res.ok) toast("Failed to create service card", { className: "errorToast", progressClassName: "errorProgress" });
+    if(!res.ok) return toast("Failed to create service card", { className: "errorToast", progressClassName: "errorProgress" });
     if(!res.ok) throw new Error(`failed to create,with error: ${data.message}`);
 
     toast("SUCCESS, refresh page to see changes", { className: "successToast", progressClassName: "successProgress" });

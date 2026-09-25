@@ -21,8 +21,10 @@ export const postAppointment = async (appointmentBody) => {
     });
     const data = await res.json();
 
-    if (!res.ok) toast("Failed to create appointment", { className: "errorToast", progressClassName: "errorProgress" });
-    if (!res.ok) throw new Error(`failed to create appointment,with error: ${data.message}`);
+    if (!res.ok) {
+        toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(data.message || "Failed to load appointments");
+    }
 
     toast("SUCCESS, appointment made!", { className: "successToast", progressClassName: "successProgress" });
     return data;
@@ -32,7 +34,10 @@ export const postAppointment = async (appointmentBody) => {
 export const getByPhone = async (phone) => {
     const res = await fetch(`${API_URL}/byPhone?phone=${phone}`);
     const data = await res.json();
-    if (!res.ok) toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+    if (!res.ok) {
+        toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(data.message || "Failed to load appointments");
+    }
     console.log(data);
     return data;
 }
@@ -41,14 +46,17 @@ export const getByPhone = async (phone) => {
 //------------ADMIN----------\\
 
 //get by date
-export const getByDate = async (date) => {
+export const getByDate = async (date, toggleFrom) => {
     const accessToken = localStorage.getItem('accessToken');
-    const res = await fetch(`${API_URL}/byDate?date=${date}`, {
+    const res = await fetch(`${API_URL}/byDate?date=${date}&toggleFrom=${toggleFrom}`, {
         method: 'GET',
         headers: { "Authorization": `Bearer ${accessToken}` },
     });
     const data = await res.json();
-    if (!res.ok) toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+    if (!res.ok) {
+        toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(data.message || "Failed to load appointments");
+    }
     return data;
 }
 //get all appointments not older then 7 days
@@ -60,12 +68,28 @@ export const getAll = async () => {
         headers: { "Authorization": `Bearer ${accessToken}` },
     });
     const data = await res.json();
-    if (!res.ok) toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
-
-    console.log(data);
+    if (!res.ok) {
+        toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(data.message || "Failed to load appointments");
+    }
 
     return data;
 }
-//update one
 
 // delete one
+export const deleteOne = async (id) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${accessToken}` }
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(data.message || "Failed to load appointments");
+    }
+
+    toast("SUCCESS, appointment deleted", { className: "successToast", progressClassName: "successProgress" });
+    return data;
+}

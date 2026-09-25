@@ -34,8 +34,8 @@ export function PricesPage({ admin = false }) {
 
                     {services.filter((item) => item.category === "haircut").map((service) =>
                         <ServiceCard
-                            key={service.name}
-                            name={service.name}
+                            key={service.serviceName}
+                            name={service.serviceName}
                             price={service.price}
                             time={service.time}
                             description={service.description}
@@ -53,8 +53,8 @@ export function PricesPage({ admin = false }) {
 
                     {services.filter((item) => item.category === "beard").map((service) =>
                         <ServiceCard
-                            key={service.name}
-                            name={service.name}
+                            key={service.serviceName}
+                            name={service.serviceName}
                             price={service.price}
                             time={service.time}
                             description={service.description}
