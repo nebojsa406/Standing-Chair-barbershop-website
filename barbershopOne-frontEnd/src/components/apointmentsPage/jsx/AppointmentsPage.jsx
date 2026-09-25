@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { getTimes, postAppointment, getByPhone, getByDate, getAll } from "../../../api/appointments";
 import { toast } from "react-toastify";
 import { getServices } from "../../../api/services.js"
+import { AdminAppointmentPanel } from "./AdminAppointmentPanel.jsx";
+import { AppointmentSearch } from "./AppointmentSearch.jsx";
+import { AppointmentResultsTemplate } from "./AppointmentResultsTemplate.jsx";
 
 const TIME_SLOTS = [
     "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
@@ -149,11 +152,13 @@ export function AppointmentsPage() {
     async function handleAdminSearch() {
         if (apcDate !== "") {
             const data = await getByDate(apcDate);
-            setAppointmentsAdmin(data);
+            const appointments = Array.isArray(data) ? data : data?.appointments;
+            setAppointmentsAdmin(Array.isArray(appointments) ? appointments : []);
             setApcDate("");
         } else {
             const data = await getAll();
-            setAppointmentsAdmin(data);
+            const appointments = Array.isArray(data) ? data : data?.appointments;
+            setAppointmentsAdmin(Array.isArray(appointments) ? appointments : []);
         }
     }
 
@@ -173,71 +178,26 @@ export function AppointmentsPage() {
             >
                 {showAdminPanel ? "close admin panel" : "open admin panel"}
             </button>
-            {showAdminPanel && (
-                <aside className="admin-panel" aria-label="Admin panel">
-                    <h2>admin panel</h2>
-                    <p>manage appointments</p>
-                    <div className="admin-panel-content">
-                        <div className="apc-buttons-div">
-                            <button onClick={handleAdminSearch} className="search-appointment-btn">Search</button>
-                            <input
-                                type="date"
-                                className="appoint-page-date-input"
-                                defaultValue={apcDate !== "" && apcDate}
-                                onChange={(event) => setApcDate(event.target.value)}
-                            />
-                            <button className="search-appointment-btn">Delete</button>
-                            <button className="search-appointment-btn">Mark as Done</button>
-                        </div>
-                        <div className={`apc-appointments ${appointmentsAdmin.length > 12 ? "has-scroll" : ""} ${appointmentsAdmin.length > 4 ? "has-mobile-scroll" : ""}`}>
+            {showAdminPanel &&
+                <AdminAppointmentPanel
+                    appointmentsAdmin={appointmentsAdmin}
+                    handleAdminSearch={handleAdminSearch}
+                    apcDate={apcDate}
+                    setApcDate={setApcDate}
+                    setAdminSelectedCard={setAdminSelectedCard}
+                    adminSelectedCard={adminSelectedCard}
+                    dateComparison={dateComparison}
+                    dateToday={dateToday}
+                />
+            }
 
-                            {appointmentsAdmin.length !== 0 ?
-                                appointmentsAdmin.map((item) => {
-                                    return (
-                                        <div
-                                            onClick={() => setAdminSelectedCard(item._id)}
-                                            className={`appointment-results-card ${adminSelectedCard === item._id ? "admin-selected-card" : ""}
-                                            ${item.done === true || !dateComparison(item.date, dateToday) ? "appointment-done" : ""}`}
-                                            key={item._id}
-                                        >
-                                            <p>{item.fullname}</p>
-                                            <p>{item.date.slice(0, 10)}</p>
-                                            <p>{item.time}</p>
-                                            <p>{item.phone}</p>
-                                        </div>
-                                    )
-                                })
-                                : <>no appointments found</>
-                            }
-                        </div>
-                    </div>
-                </aside>
-            )}
             {showAppointmentSearch && (
-                <div className="appointment-search">
-                    <button
-                        type="button"
-                        aria-label="Close appointment search"
-                        className="close-appointment-search-btn"
-                        onClick={() => setShowAppointmentSearch(false)}
-                    >
-                        <span className="appointment-search-icon">-</span>
-                    </button>
-                    <label htmlFor="appointment-phone-search">find your appointment</label>
-                    <input
-                        id="appointment-phone-search"
-                        type="tel"
-                        inputMode="numeric"
-                        placeholder="enter phone number"
-                        maxLength={"9"}
-                        value={searchPhone}
-                        onChange={(event) => setSearchPhone(event.target.value.replace(/\D/g, ""))}
-                    />
-                    <p className="appointment-search-format">
-                        069/067/068 XXX XXX format
-                    </p>
-                    <button onClick={handleSearchByPhone} className="search-appointment-btn">Search</button>
-                </div>
+                <AppointmentSearch
+                    searchPhone={searchPhone}
+                    setSearchPhone={setSearchPhone}
+                    onClose={() => setShowAppointmentSearch(false)}
+                    onSearch={handleSearchByPhone}
+                />
             )}
             {!showAppointmentSearch && (
                 <button
@@ -253,31 +213,12 @@ export function AppointmentsPage() {
                 </button>
             )}
             {showAppointments && (
-                <div className="appointment-results-template">
-                    <button
-                        type="button"
-                        className="close-appointments-btn"
-                        onClick={handleCloseAppointments}
-                    >
-                        Close
-                    </button>
-                    <div className={`appointment-results-template-inner ${appointmentsByPhone.length > 3 ? "has-scroll" : ""}`}>
-                        {appointmentsByPhone.length !== 0 && appointmentsByPhone.map((item) => {
-                            return (
-                                <div
-                                    className={`appointment-results-card 
-                                    ${item.done === true || !dateComparison(item.date, dateToday) ? "appointment-done" : ""}`}
-                                    key={item._id}
-                                >
-                                    <p>{item.fullname}</p>
-                                    <p>{item.date.slice(0, 10)}</p>
-                                    <p>{item.time}</p>
-                                    <p>{item.phone}</p>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
+                <AppointmentResultsTemplate
+                    appointments={appointmentsByPhone}
+                    onClose={handleCloseAppointments}
+                    dateComparison={dateComparison}
+                    dateToday={dateToday}
+                />
             )}
 
             {!showAppointments && showAppointmentSearch &&
