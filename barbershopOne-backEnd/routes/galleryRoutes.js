@@ -18,7 +18,7 @@ router.get("/", browseLimiter, async (req, res, next) => {
         if (!photos.length) return res.status(404).json({ message: "no photos found" });
         return res.status(200).json(photos);
     } catch (err) {
-        return next(err);
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -65,13 +65,12 @@ router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, upload.sing
         const savedPhoto = await photoBody.save();
         return res.status(200).json({ message: "successfuly uploaded image!", url: savedPhoto.imageUrls });
     } catch (err) {
-        return next(err);
+        res.status(500).json({ message: "server error" });
     }
 })
 
 //delete
-router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (req, res, next) => {
-    try {
+router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (req, res, next) => {    try {
         const photo = await Photo.findById(req.params.id);
         if(!photo) return res.status(404).json({message: "no photo with matching id found in db"});
 
@@ -85,7 +84,7 @@ router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async 
         await Photo.findByIdAndDelete(req.params.id);
         return res.status(200).json({ message: "photo deleted successfuly" });
     } catch (err) {
-        return next(err);
+        res.status(500).json({ message: "server error" });
     }
 });
 

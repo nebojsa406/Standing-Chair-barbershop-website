@@ -33,19 +33,39 @@ export const getByPhone = async (phone) => {
     const res = await fetch(`${API_URL}/byPhone?phone=${phone}`);
     const data = await res.json();
     if (!res.ok) toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+    console.log(data);
     return data;
 }
+
+
 //------------ADMIN----------\\
 
 //get by date
 export const getByDate = async (date) => {
-    const res = await fetch(`${API_URL}/byDate?date=${date}`);
+    const accessToken = localStorage.getItem('accessToken');
+    const res = await fetch(`${API_URL}/byDate?date=${date}`, {
+        method: 'GET',
+        headers: { "Authorization": `Bearer ${accessToken}` },
+    });
     const data = await res.json();
     if (!res.ok) toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
     return data;
 }
-//get one
+//get all appointments not older then 7 days
+export const getAll = async () => {
+    const accessToken = localStorage.getItem('accessToken');
 
+    const res = await fetch(`${API_URL}/`, {
+        method: 'GET',
+        headers: { "Authorization": `Bearer ${accessToken}` },
+    });
+    const data = await res.json();
+    if (!res.ok) toast(data.message, { className: "errorToast", progressClassName: "errorProgress" });
+
+    console.log(data);
+
+    return data;
+}
 //update one
 
 // delete one

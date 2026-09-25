@@ -16,10 +16,11 @@ router.get("/times", browseLimiter, async (req, res) => {
     }
 });
 
-//get user appointment by phone num
+//get user appointment by phone number
 router.get("/byPhone", crudLimiter, async (req, res) => {
     try {
         const phone = req.query.phone;
+        const expiredAppointmentsIds = [];
         const todayDate = new Date();
         const todayTime = [new Date().getHours(), new Date().getMinutes()];
         todayDate.setUTCHours(0, 0, 0, 0);
@@ -29,17 +30,38 @@ router.get("/byPhone", crudLimiter, async (req, res) => {
         const appointments = await Appointment.find({ phone: cleaned, date: { $gte: todayDate } });
 
         for (const appointment of appointments) {
-            const time = appointment.time.split(":");
-            time[0] = Number(time[0]);
-            time[1] = Number(time[1]);
+            if (String(todayDate) === String(appointment.date)) {
 
-            if (todayTime[0] >= time[0] && todayTime[1] > time[1]) {
-                return res.status(404).json({ message: "no appointments in future dates found for this phone number" });
+                const time = appointment.time.split(":");
+                time[0] = Number(time[0]);
+                time[1] = Number(time[1]);
+
+                if (todayTime[0] >= time[0] && todayTime[1] > time[1]) {
+                    expiredAppointmentsIds.push(appointment.id);
+                }
             }
         }
 
-        if (appointments.length === 0) return res.status(404).json({ message: "no appointments found for this phone number" });
-        res.status(200).json({ appointments });
+        const filteredAppointments = [];
+        
+        for (const appointment of appointments) {
+            if (expiredAppointmentsIds.length > 0) {
+                for (const expiredAppointmentId of expiredAppointmentsIds) {
+                    if (expiredAppointmentId === appointment.id) { }
+                    else { filteredAppointments.push(appointment); }
+                }
+            } else {
+                filteredAppointments.push(appointment);
+            }
+        }
+
+        if (filteredAppointments.length === 0 && appointments.length !== 0) {
+            return res.status(404).json({ message: "no appointments in present or future found for this phone number" });
+        } else if (filteredAppointments.length === 0) {
+            return res.status(404).json({ message: "no appointments found for this phone number" });
+        }
+
+        res.status(200).json({ appointments: filteredAppointments });
     } catch (err) {
         res.status(500).json({ message: "server error" });
     }
@@ -54,6 +76,18 @@ router.get("/", crudLimiter, authenticateAccessToken, requireAdmin, async (req, 
         res.status(500).json({ message: "server error" });
     }
 });
+
+//get by date
+router.get("/byDate", crudLimiter, authenticateAccessToken, requireAdmin, async(req, res) => {
+    try {
+        const argDate = req.query.date.replace(" 00:00", "+00:00");
+        const date = new Date(argDate);
+        const appointments = await Appointment.find({date: date});
+        res.status(200).json(appointments);
+    } catch (err) {
+        res.status(500).json({ message: "server error"});
+    }
+})
 
 //get one
 router.get("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (req, res) => {

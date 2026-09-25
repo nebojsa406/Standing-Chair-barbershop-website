@@ -1,6 +1,6 @@
 import "../css/AppointmentsPage.css"
 import { useState, useEffect } from "react";
-import { getTimes, postAppointment, getByPhone } from "../../../api/appointments";
+import { getTimes, postAppointment, getByPhone, getByDate, getAll } from "../../../api/appointments";
 import { toast } from "react-toastify";
 import { getServices } from "../../../api/services.js"
 
@@ -29,24 +29,34 @@ export function AppointmentsPage() {
         `${String(new Date().getHours()).padStart(2, "0")}:${String(new Date().getMinutes()).padStart(2, "0")}`
     );
 
+    //taken times data
     const [takenTimes, setTakenTimes] = useState([]);
     const [services, setServices] = useState([]);
+
+    //search by phone apointment data
+    const [searchPhone, setSearchPhone] = useState("");
+    const [appointmentsByPhone, setAppointmentsByPhone] = useState([]);
+    const [showAppointmentSearch, setShowAppointmentSearch] = useState(true);
+    const [showAppointments, setShowAppointments] = useState(false);
 
     //appointment data
     const [selectedService, setSelectedService] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState("");
     const [fullname, setFullname] = useState("");
-    const [searchPhone, setSearchPhone] = useState("");
-    const [appointmentsByPhone, setAppointmentsByPhone] = useState([]);
-    const [showAppointmentSearch, setShowAppointmentSearch] = useState(true);
-    const [showAppointments, setShowAppointments] = useState(false);
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [details, setDetails] = useState("");
+
+    //admin panel data
     const [showAdminPanel, setShowAdminPanel] = useState(false);
+    const [apcDate, setApcDate] = useState("");
+    const [appointmentsAdmin, setAppointmentsAdmin] = useState([]);
+    const [adminSelectedCard, setAdminSelectedCard] = useState("");
 
 
+
+    //---------------------------------------------------------\\
     useEffect(() => {
         (async () => {
             try {
@@ -136,33 +146,69 @@ export function AppointmentsPage() {
         }
     }
 
+    async function handleAdminSearch() {
+        if (apcDate !== "") {
+            const data = await getByDate(apcDate);
+            setAppointmentsAdmin(data);
+            setApcDate("");
+        } else {
+            const data = await getAll();
+            setAppointmentsAdmin(data);
+        }
+    }
+
+    function dateComparison(dateA, dateB) {//is date A bigger then date B
+        if (dateA >= dateB) {
+            return true;
+        }
+        return false;
+    }
+
     return (
         <div className="appointments-page">
-            {!showAppointmentSearch && (
-                <button
-                    type="button"
-                    className="admin-panel-toggle-btn"
-                    onClick={handleToggleAdminPanel}
-                >
-                    {showAdminPanel ? "close admin panel" : "open admin panel"}
-                </button>
-            )}
+            <button
+                type="button"
+                className={`admin-panel-toggle-btn ${showAppointmentSearch ? "admin-toggle-search-open" : ""}`}
+                onClick={handleToggleAdminPanel}
+            >
+                {showAdminPanel ? "close admin panel" : "open admin panel"}
+            </button>
             {showAdminPanel && (
                 <aside className="admin-panel" aria-label="Admin panel">
                     <h2>admin panel</h2>
                     <p>manage appointments</p>
                     <div className="admin-panel-content">
                         <div className="apc-buttons-div">
-                            <button className="search-appointment-btn">Search</button>
+                            <button onClick={handleAdminSearch} className="search-appointment-btn">Search</button>
                             <input
                                 type="date"
                                 className="appoint-page-date-input"
+                                defaultValue={apcDate !== "" && apcDate}
+                                onChange={(event) => setApcDate(event.target.value)}
                             />
                             <button className="search-appointment-btn">Delete</button>
                             <button className="search-appointment-btn">Mark as Done</button>
                         </div>
-                        <div className="apc-appointments">
-                            no appointments found
+                        <div className={`apc-appointments ${appointmentsAdmin.length > 12 ? "has-scroll" : ""} ${appointmentsAdmin.length > 4 ? "has-mobile-scroll" : ""}`}>
+
+                            {appointmentsAdmin.length !== 0 ?
+                                appointmentsAdmin.map((item) => {
+                                    return (
+                                        <div
+                                            onClick={() => setAdminSelectedCard(item._id)}
+                                            className={`appointment-results-card ${adminSelectedCard === item._id ? "admin-selected-card" : ""}
+                                            ${item.done === true || !dateComparison(item.date, dateToday) ? "appointment-done" : ""}`}
+                                            key={item._id}
+                                        >
+                                            <p>{item.fullname}</p>
+                                            <p>{item.date.slice(0, 10)}</p>
+                                            <p>{item.time}</p>
+                                            <p>{item.phone}</p>
+                                        </div>
+                                    )
+                                })
+                                : <>no appointments found</>
+                            }
                         </div>
                     </div>
                 </aside>
@@ -218,8 +264,12 @@ export function AppointmentsPage() {
                     <div className={`appointment-results-template-inner ${appointmentsByPhone.length > 3 ? "has-scroll" : ""}`}>
                         {appointmentsByPhone.length !== 0 && appointmentsByPhone.map((item) => {
                             return (
-                                <div className="appointment-results-card" key={item._id}>
-                                    <p>{item.fullName}</p>
+                                <div
+                                    className={`appointment-results-card 
+                                    ${item.done === true || !dateComparison(item.date, dateToday) ? "appointment-done" : ""}`}
+                                    key={item._id}
+                                >
+                                    <p>{item.fullname}</p>
                                     <p>{item.date.slice(0, 10)}</p>
                                     <p>{item.time}</p>
                                     <p>{item.phone}</p>
