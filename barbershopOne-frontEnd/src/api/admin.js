@@ -18,7 +18,10 @@ export async function logout() {
         headers: {"Content-Type": "application/json"},
         credentials: "include"
     });
+
+    localStorage.removeItem("accessToken");
     await cookieStore.delete("refreshToken");
+
     const resData = await res.json();
     return {body: resData.message, status: res.status}
 }

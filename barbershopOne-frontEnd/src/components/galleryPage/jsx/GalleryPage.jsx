@@ -1,16 +1,23 @@
 import "../css/GalleryPage.css";
-import { useState } from "react";
-import { AdminContentPanel } from "./AdminContentPanel.jsx";
+import { useState, useEffect } from "react";
+import { GalleryAdminPanel } from "./GalleryAdminPanel.jsx";
+import { GalleryPanel } from "./GalleryPanel.jsx";
+import { getPhotos } from "../../../api/gallery.js";
 
-function ContentPanel() {
-    return (
-        <p className="no-content-msg">no content available</p>
-    );
-}
-
-export function GalleryPage({ admin = true }) {
+export function GalleryPage({ admin = false }) {
     const [buttonActive, setButtonActive] = useState("all");
     const [gallery, setGallery] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const photos = await getPhotos();
+                setGallery(Array.isArray(photos) && photos.length > 0 ? photos : []);
+            } catch (err) {
+                console.log("failed to fetch photos from gallery!", err.message);
+            }
+        })()
+    }, [])
 
     return (
         <main className="galleryPage">
@@ -36,7 +43,7 @@ export function GalleryPage({ admin = true }) {
             </div>
 
             <section className="galleryPage-content-grid">
-                {admin ? <AdminContentPanel gallery={gallery} setGallery={setGallery} /> : <ContentPanel />}
+                {admin ? <GalleryAdminPanel gallery={gallery} setGallery={setGallery} /> : <GalleryPanel gallery={gallery} />}
             </section>
         </main>
     );

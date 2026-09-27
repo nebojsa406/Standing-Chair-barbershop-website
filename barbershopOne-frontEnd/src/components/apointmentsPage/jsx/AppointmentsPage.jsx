@@ -26,7 +26,7 @@ function getTimeInMinutes(time) {
     return hours * 60 + minutes;
 }
 
-export function AppointmentsPage(admin = true) {
+export function AppointmentsPage({ admin = false }) {
     const dateToday = getLocalDateString();
     const currentTimeInMinutes = getTimeInMinutes(
         `${String(new Date().getHours()).padStart(2, "0")}:${String(new Date().getMinutes()).padStart(2, "0")}`
@@ -157,7 +157,7 @@ export function AppointmentsPage(admin = true) {
 
     return (
         <div className="appointments-page">
-            {admin === true &&
+            {admin === true ?
                 <button
                     type="button"
                     className={`admin-panel-toggle-btn ${showAppointmentSearch ? "admin-toggle-search-open" : ""}`}
@@ -165,6 +165,7 @@ export function AppointmentsPage(admin = true) {
                 >
                     {showAdminPanel ? "close admin panel" : "open admin panel"}
                 </button>
+                : <></>
             }
 
             {showAdminPanel && admin === true ?
@@ -223,7 +224,7 @@ export function AppointmentsPage(admin = true) {
                     <div className="appoint-page-select-service-div">
                         <p className="appoint-page-eyebrow">CHOOSE A SERVICE</p>
                         <div className="service-buttons-grid">
-                            {services.map((service, index) => (
+                            {services.length > 0 ? services.map((service, index) => (
                                 <button
                                     key={index}
                                     type="button"
@@ -232,7 +233,7 @@ export function AppointmentsPage(admin = true) {
                                 >
                                     {service.serviceName} <span className="service-price">{service.price}</span>
                                 </button>
-                            ))}
+                            )) : <>failed to load services</>}
                         </div>
                     </div>
 

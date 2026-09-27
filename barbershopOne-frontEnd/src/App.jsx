@@ -37,20 +37,30 @@ function App() {
   }, []);
 
   //console.log("app.jsx: userData: ", user)
-  
+
   return (
     <div className="app-shell">
       <Header />
       <main className="main-content">
         <Routes>
+
           <Route path="/" element={<Home />} />
+
           <Route path="/location" element={<LocationPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          {user ? <Route path="/prices" element={<PricesPage admin={user.role === "admin" ? true : false}/>} />
-          :<Route path="/prices" element={<PricesPage />} />}
-          <Route path="/book" element={<AppointmentsPage />} />
+
+          {user ? <Route path="/gallery" element={<GalleryPage admin={user.role === "admin" ? true : false } />} />
+          : <Route path="/gallery" element={<GalleryPage />} />}
+
+          {user ? <Route path="/prices" element={<PricesPage admin={user.role === "admin" ? true : false} />} />
+            : <Route path="/prices" element={<PricesPage />} />}
+
+          {user ? <Route path="/book" element={<AppointmentsPage admin={user.role === "admin" ? true : false} />} />
+            : <Route path="/book" element={<AppointmentsPage />} />}
+
           <Route path="/admin1876" element={<AdminPage user={user} />} />
+
           <Route path="*" element={<NotFoundPage />} />
+
         </Routes>
         <ToastContainer />
       </main>

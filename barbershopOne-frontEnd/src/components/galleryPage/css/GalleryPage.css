@@ -124,13 +124,91 @@
     border: 1px solid var(--hair);
 }
 
+.gallery-viewer,
+.gallery-admin-panel {
+    position: relative;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: 512px 200px;
+    gap: 20px;
+    min-height: 808px;
+    padding: 56px 0 20px;
+}
+
+.gallery-admin-panel.is-adding {
+    grid-template-rows: 180px 512px 200px;
+    min-height: 1008px;
+}
+
 .gallery-admin-actions {
     position: absolute;
-    top: 18px;
-    right: 18px;
+    top: 10px;
+    right: 0;
     z-index: 2;
     display: flex;
     gap: 8px;
+}
+
+.gallery-selected-photo {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--ink);
+    border: 1px solid var(--hair);
+}
+
+.gallery-selected-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.gallery-photo-thumbnails {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 200px;
+    grid-template-rows: 200px;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-color: var(--brass-dim) var(--ink);
+}
+
+.gallery-photo-thumbnail {
+    width: 200px;
+    height: 200px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--hair);
+    background: var(--ink);
+    cursor: pointer;
+}
+
+.gallery-photo-thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.72;
+    transition: opacity .2s ease;
+}
+
+.gallery-photo-thumbnail:hover img,
+.gallery-photo-thumbnail.is-selected img {
+    opacity: 1;
+}
+
+.gallery-photo-thumbnail.is-selected {
+    border: 2px solid var(--brass-bright);
+}
+
+.gallery-photo-thumbnail:focus-visible {
+    outline: 2px solid var(--brass-bright);
+    outline-offset: 2px;
 }
 
 .gallery-add-btn,
@@ -166,6 +244,11 @@
     border: 1px dashed var(--brass-dim);
     background: rgba(18, 16, 13, 0.45);
     transition: border-color .2s ease, background-color .2s ease;
+}
+
+.gallery-admin-panel .gallery-upload-zone {
+    min-height: 0;
+    margin: 0;
 }
 
 .gallery-upload-zone.is-dragging {

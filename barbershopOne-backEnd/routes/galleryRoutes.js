@@ -26,6 +26,7 @@ router.get("/", browseLimiter, async (req, res, next) => {
 router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, upload.single("image"), async (req, res, next) => {
     try {
         const image = req.file;
+        console.log(req.file);
         const category = req.body.category;
 
         if (!image) return res.status(400).json({ message: "image file is required" });

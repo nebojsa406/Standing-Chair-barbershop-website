@@ -12,13 +12,13 @@ const services = [
     number: '04873',
     title: 'Beard Sculpt & Line-up',
     description: 'Shape, trim and hot towel finish. Includes a straight razor edge line-up.',
-    price: '15€',
+    price: '10€',
   },
   {
     number: '04874',
     title: 'Hot Towel Shave',
     description: 'The full ritual — hot towels, pre-shave oil, and a straight razor finish.',
-    price: '10€',
+    price: '7€',
   },
 ];
 

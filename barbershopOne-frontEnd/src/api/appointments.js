@@ -59,9 +59,11 @@ export const getByDate = async (date, toggleFrom) => {
     }
     return data;
 }
-//get all appointments not older then 7 days
+
+//get all appointments
 export const getAll = async () => {
     const accessToken = localStorage.getItem('accessToken');
+    console.log("accessToken: ", accessToken);
 
     const res = await fetch(`${API_URL}/`, {
         method: 'GET',

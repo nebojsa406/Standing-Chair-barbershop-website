@@ -1,27 +1,31 @@
 import { useState } from "react";
 
-export function AdminContentPanel({ gallery, setGallery }) {
+export function GalleryAdminPanel({ gallery = [], setGallery }) {
 
     const [isAdding, setIsAdding] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [newImages, setNewImages] = useState([]);
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [selectedPhoto, setSelectedPhoto] = useState(null);
+    const photoUrls = [...gallery, ...newImages].flatMap((photo) => {
+        const urls = Array.isArray(photo.imageUrls) ? photo.imageUrls : [photo.imageUrls];
+        return urls.filter((url) => typeof url === "string" && url.length > 0);
+    });
+    const displayedPhoto = photoUrls.includes(selectedPhoto) ? selectedPhoto : photoUrls[0];
 
     async function addImages(files) {
         const filteredFiles = Array.from(files ?? []).filter((file) => file.type.startsWith("image/"));
-        setSelectedFiles([...filteredFiles]);//here
-        if (selectedFiles.length === 0) return;
+        if (filteredFiles.length === 0) return;
 
         try {
             const images = []
-            for (const file of selectedFiles) {
+            for (const file of filteredFiles) {
                 const newImage = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload = () => resolve({ name: file.name, src: reader.result });
+                    reader.onload = () => resolve(reader.result);
                     reader.onerror = reject;
                     reader.readAsDataURL(file);
                 });
-                images.push(newImage);
+                images.push({category: "interior", imageUrls: [newImage]});
             }
             setNewImages([...newImages, ...images]);
 
@@ -38,18 +42,17 @@ export function AdminContentPanel({ gallery, setGallery }) {
 
     function handleOpenClose() {
         setIsAdding(!isAdding);
-
+        setNewImages([]);
     }
 
     function handleSubmit() {
         setGallery((currentGallery) => [...currentGallery, ...newImages]);
-        setSelectedFiles([]);
         setNewImages([]);
         setIsAdding(false);
     }
 
     return (
-        <>
+        <div className={`gallery-admin-panel${isAdding ? " is-adding" : ""}`}>
             <div className="gallery-admin-actions">
                 {isAdding && (
                     <button
@@ -88,7 +91,6 @@ export function AdminContentPanel({ gallery, setGallery }) {
                         className="gallery-file-input"
                         type="file"
                         accept="image/*"
-                        single
                         onChange={(event) => addImages(event.target.files)}
                     />
                     <label htmlFor="gallery-photo-upload" className="gallery-upload-label">
@@ -97,18 +99,27 @@ export function AdminContentPanel({ gallery, setGallery }) {
                     </label>
                 </div>
             )}
-            {newImages.length > 0 && newImages.map((photo) => (
-                <figure className="gallery-photo-card" key={`${photo.name}-${photo.src}`}>
-                    <img src={photo.src} alt={photo.name} />
-                    <figcaption>{photo.name}</figcaption>
-                </figure>
-            ))}
-            {gallery.map((photo) => (
-                <figure className="gallery-photo-card" key={`${photo.name}-${photo.src}`}>
-                    <img src={photo.src} alt={photo.name} />
-                    <figcaption>{photo.name}</figcaption>
-                </figure>
-            ))}
-        </>
+
+            <div className="gallery-selected-photo">
+                {displayedPhoto ? <img src={displayedPhoto} alt="Selected gallery photo" /> : null}
+            </div>
+
+            {photoUrls.length > 0 && (
+                <div className="gallery-photo-thumbnails" aria-label="Gallery photos">
+                    {photoUrls.map((photo, index) => (
+                        <button
+                            className={`gallery-photo-thumbnail${photo === displayedPhoto ? " is-selected" : ""}`}
+                            type="button"
+                            key={`${photo}-${index}`}
+                            onClick={() => setSelectedPhoto(photo)}
+                            aria-label={`Show gallery photo ${index + 1}`}
+                            aria-pressed={photo === displayedPhoto}
+                        >
+                            <img src={photo} alt="" />
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 }
