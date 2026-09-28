@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const photoSchema = new mongoose.Schema({
-    imageUrls: { type: [String], default: [] },
-    imagePublicIds: { type: [String], default: [] },
+    imageUrl: {type: String, required: true},
+    imagePublicId: {type: String, required: true},
     category: {type: String, required: true}
-})
+},{ versionKey: false })
 
 module.exports = mongoose.model("Photo", photoSchema, "gallery");

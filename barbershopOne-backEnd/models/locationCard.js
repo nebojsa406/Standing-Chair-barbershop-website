@@ -9,6 +9,6 @@ const locationSchema = new mongoose.Schema({
     notWorkingDays: [{type: String, required: true}],
     googleMapsLink: {type: String, required: true},
     googleMapsEmbedLink: {type: String, required: true}
-});
+}, {versionKey: false});
 
 module.exports = mongoose.model("LocationCard", locationSchema, "location");

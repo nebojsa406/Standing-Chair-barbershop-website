@@ -6,6 +6,6 @@ const serviceSchema = new mongoose.Schema({
     time: {type: String, required: true},
     category: {type: String, required: true},
     description: {type: String, required: true}
-});
+}, {versionKey: false});
 
 module.exports = mongoose.model("ServiceCard", serviceSchema, "services");

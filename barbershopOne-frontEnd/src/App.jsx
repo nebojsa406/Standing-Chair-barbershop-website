@@ -29,7 +29,7 @@ function App() {
         console.log("error on refresh accessToken: ", error.message)
         setUser(null);
       }
-    })(); //call callback async function
+    })();
 
     return () => {
       ignore = true; // runs automatically when component unmounts

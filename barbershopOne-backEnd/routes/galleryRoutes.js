@@ -5,11 +5,42 @@ const cloudinary = require("../config/cloudinary");
 const { fileTypeFromBuffer } = require("file-type");
 const { crudLimiter, browseLimiter, authenticateAccessToken, requireAdmin } = require('../middleware/auth');
 
-const Photo = require("../models/photo.js");
+const Photo = require("../models/photos.js");
 
 const upload = multer({
-    storage: multer.memoryStorage()
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024, files: 5 }, // 5 files x 5mb = 24mb per request
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith("image/")) cb(null, true);
+        else cb(new Error("only images are allowed"))
+    }
 })
+
+function uploadToCloud(buffer, originalName) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: "barbershop-one-gallery",
+                resource_type: "image"
+            },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve({
+                    url: result.secure_url,
+                    publicId: result.public_id
+                });
+            }
+        );
+        stream.end(buffer);
+    });
+}
+
+async function deleteFromCloud(publicId) {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+}
+//------------------------------------all above boiler plate functions-----------------------\\
+
 
 //get 
 router.get("/", browseLimiter, async (req, res, next) => {
@@ -18,73 +49,61 @@ router.get("/", browseLimiter, async (req, res, next) => {
         if (!photos.length) return res.status(404).json({ message: "no photos found" });
         return res.status(200).json(photos);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
 
-//create
-router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, upload.single("image"), async (req, res, next) => {
+//upload many
+router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, upload.array("images", 5), async (req, res, next) => {
+    const cloudUploads = []
     try {
-        const image = req.file;
-        console.log(req.file);
-        const category = req.body.category;
+        if (!req.files || req.files.length === 0) return res.status(400).json({ message: "no files uploaded" });
 
-        if (!image) return res.status(400).json({ message: "image file is required" });
-        if (!category || typeof category !== "string" || !category.trim()) {
-            return res.status(400).json({ message: "category is required" });
+        for (const file of req.files) { //upload photos
+            const result = await uploadToCloud(file.buffer, file.originalname);
+            cloudUploads.push(result);
         }
 
-        const photoBody = new Photo({
-            category: category.trim(),
-            imageUrls: [],
-            imagePublicIds: []
-        });
-
-        const type = await fileTypeFromBuffer(image.buffer);
-        if (!type || !type.mime.startsWith("image/")) return res.status(400).json({ message: "invalid file type" });
-
-        const result = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                {
-                    folder: "photos"
-                },
-                (error, uploadResult) => {
-                    if (error) reject(error);
-                    else resolve(uploadResult)
-                }
-            );
-            stream.end(image.buffer);
-        });
-
-        if (!result || !result.secure_url || !result.public_id) {
-            return res.status(500).json({ message: "image upload failed" });
+        const photoBodys = [] //creating many documents bodys
+        for (const item of cloudUploads) {
+            const photoBody = {
+                imageUrl: item.url,
+                imagePublicId: item.publicId,
+                category: req.body.category
+            }
+            photoBodys.push(photoBody);
         }
 
-        photoBody.imageUrls.push(result.secure_url);
-        photoBody.imagePublicIds.push(result.public_id);
+        const newPhotos = await Photo.insertMany(photoBodys);
 
-        const savedPhoto = await photoBody.save();
-        return res.status(200).json({ message: "successfuly uploaded image!", url: savedPhoto.imageUrls });
+        res.status(201).json(newPhotos);
     } catch (err) {
-        res.status(500).json({ message: "server error" });
+        for (const item of cloudUploads) { //delete photos
+            const result = await deleteFromCloud(item.publicId);
+            console.log(result);
+        }
+
+        console.error(err);
+        res.status(500).json({ message: "internal server error" });
     }
-})
+});
 
 //delete
-router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (req, res, next) => {    try {
+router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (req, res, next) => {
+    try {
         const photo = await Photo.findById(req.params.id);
-        if(!photo) return res.status(404).json({message: "no photo with matching id found in db"});
+        if (!photo) return res.status(404).json({ message: "no photo with matching id found in db" });
 
-        if (Array.isArray(photo.imagePublicIds) && photo.imagePublicIds.length) {
-            for (let i = 0; i < photo.imagePublicIds.length; i++) {
-                await cloudinary.uploader.destroy(photo.imagePublicIds[i]);
-                console.log("success, cloudinary photo deleted at INDEX: ", i);
-            }
-        }
 
-        await Photo.findByIdAndDelete(req.params.id);
-        return res.status(200).json({ message: "photo deleted successfuly" });
+        const deletedPhotoStatus = await cloudinary.uploader.destroy(photo.imagePublicId);
+        console.log("deleted photo status: ", deletedPhotoStatus);
+
+
+        const deletedDocument = await Photo.findByIdAndDelete(req.params.id);
+        return res.status(200).json({ message: "photo deleted successfuly", photo: deletedDocument });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });

@@ -8,6 +8,6 @@ const appointmentSchema = new mongoose.Schema({
     date: {type: Date, required: true},
     time: {type: String, required: true},
     details: {type: String, required: false}
-});
+}, {versionKey: false});
 
 module.exports = mongoose.model("Appointment", appointmentSchema);
