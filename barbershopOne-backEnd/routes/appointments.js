@@ -12,6 +12,7 @@ router.get("/times", browseLimiter, async (req, res) => {
         if (takenTimes.length === 0) return res.status(200).json({ message: "no taken times been found in present or future" });
         res.status(200).json({ takenTimes });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -63,6 +64,7 @@ router.get("/byPhone", crudLimiter, async (req, res) => {
 
         res.status(200).json({ appointments: filteredAppointments });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -73,6 +75,7 @@ router.get("/", browseLimiter, authenticateAccessToken, requireAdmin, async (req
         const appointments = await Appointment.find();
         res.status(200).json(appointments);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -87,6 +90,7 @@ router.get("/byDate", browseLimiter,authenticateAccessToken, requireAdmin, async
         if (appointments.length === 0) return res.status(404).json({message: "no appointments found (backend 404)"});
         res.status(200).json(appointments);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error"});
     }
 })
@@ -101,6 +105,7 @@ router.get("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (re
         if (!appointment) return res.status(404).json({ message: "appointment not found" });
         res.status(200).json(appointment);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -162,6 +167,7 @@ router.post("/", crudLimiter, async (req, res) => {
         const newAppointment = await appointment.save();
         res.status(201).json(newAppointment);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -189,6 +195,7 @@ router.patch("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async (
         if (!newAppointment) return res.status(404).json({ message: "appointment not found" });
         res.status(200).json({ message: "item updated", item: newAppointment });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -203,6 +210,7 @@ router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async 
         if (!appointment) return res.status(404).json({ message: "appointment not found" });
         res.status(200).json({ message: "deleted item successfully", item: appointment });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });

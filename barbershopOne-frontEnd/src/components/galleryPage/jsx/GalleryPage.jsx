@@ -7,6 +7,8 @@ import { getPhotos } from "../../../api/gallery.js";
 export function GalleryPage({ admin = false }) {
     const [buttonActive, setButtonActive] = useState("all");
     const [gallery, setGallery] = useState([]);
+    const [isAddingPhotos, setIsAddingPhotos] = useState(false);
+    const visibleGallery = buttonActive === "all" ? gallery : gallery.filter((photo) => photo.category === buttonActive);
 
     useEffect(() => {
         (async () => {
@@ -32,18 +34,18 @@ export function GalleryPage({ admin = false }) {
                     ALL
                 </button>
 
-                <button className={buttonActive === "interior" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("interior")}>
+                <button className={buttonActive === "interior" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("interior")} disabled={admin && isAddingPhotos}>
                     INTERIOR
                 </button>
 
-                <button className={buttonActive === "exterior" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("exterior")}>
+                <button className={buttonActive === "exterior" ? "filter-btn-active" : "filter-btn"} onClick={() => setButtonActive("exterior")} disabled={admin && isAddingPhotos}>
                     EXTERIOR
                 </button>
 
             </div>
 
             <section className="galleryPage-content-grid">
-                {admin ? <GalleryAdminPanel gallery={gallery} setGallery={setGallery} /> : <GalleryPanel gallery={gallery} />}
+                {admin ? <GalleryAdminPanel gallery={visibleGallery} setGallery={setGallery} onAddingChange={setIsAddingPhotos} /> : <GalleryPanel gallery={visibleGallery} />}
             </section>
         </main>
     );

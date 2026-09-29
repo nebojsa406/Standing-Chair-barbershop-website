@@ -1,10 +1,61 @@
-const API_URL = "http://localhost:5000/gallery"
+const API_URL = "http://localhost:5000/gallery";
+import { toast } from "react-toastify";
 
 //get
 export const getPhotos = async () => {
     const res = await fetch(`${API_URL}/`);
-    if (!res.ok) throw new Error('failed to fetch gallery');
+    if (!res.ok) {
+        toast("failed to fetch photos", { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(`err: failed to fetch photos, err: ${data.message}`);
+    }
+
     return res.json();
 }
 
 //------------ADMIN----------\\
+
+//upload
+export const uploadPhotos = async (files, category) => {
+    const accessToken = localStorage.getItem('accessToken');
+    console.log("category: ", category);
+
+    const formData = new FormData();
+    files.forEach(file => {
+        formData.append("images", file);
+    });
+    formData.append("category", category);
+
+    const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+        body: formData
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+        toast("failed to upload photos", { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(`failed to upload photos, err: ${data.message}`);
+    }
+    toast("SUCCESS, photos uploaded!", { className: "successToast", progressClassName: "successProgress" });
+
+    return data;
+}
+
+//delete
+export const deletePhoto = async (id) => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+        toast("failed to delete photo", { className: "errorToast", progressClassName: "errorProgress" });
+        throw new Error(`failed to delete photo, err: ${data.message}`);
+    }
+    toast("SUCCESS, photo deleted!", { className: "successToast", progressClassName: "successProgress" });
+
+    return data;
+}

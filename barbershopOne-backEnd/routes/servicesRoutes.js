@@ -15,7 +15,8 @@ router.get("/", browseLimiter, async(req, res) => {
         if (services.length === 0) return res.status(200).json({message: "no services found, list of services is empty"});
         res.status(200).json({services});
     } catch (err) {
-        throw err;
+        console.error(err);
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -33,7 +34,8 @@ router.post("/", crudLimiter, authenticateAccessToken, requireAdmin, async(req, 
         const newService = await serviceBody.save();
         res.status(201).json(newService);
     } catch (err) {
-        throw err
+        console.error(err);
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -53,7 +55,8 @@ router.patch("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async(r
 
         res.status(200).json(updateServiceCard);
     } catch (err) {
-        throw err
+        console.error(err);
+        res.status(500).json({ message: "server error" });
     }
 });
 
@@ -66,7 +69,8 @@ router.delete("/:id", crudLimiter, authenticateAccessToken, requireAdmin, async(
 
         res.status(200).json(serviceCard);
     } catch (err) {
-        throw err
+        console.error(err);
+        res.status(500).json({ message: "server error" });
     }
 });
 

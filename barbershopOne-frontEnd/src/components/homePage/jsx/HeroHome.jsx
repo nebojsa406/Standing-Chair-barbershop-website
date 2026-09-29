@@ -1,5 +1,5 @@
 
-import bgImage from '../../../assets/barbershop3.jpeg';
+import bgImage from '../../../../assets/barbershop-interior-1.jpeg';
 import '../css/HeroHome.css';
 import { TicketBtn } from '../../global/jsx/TicketBtn';
 import { Link } from 'react-router-dom'

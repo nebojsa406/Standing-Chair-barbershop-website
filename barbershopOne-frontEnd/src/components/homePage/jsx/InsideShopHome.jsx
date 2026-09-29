@@ -1,5 +1,7 @@
 import '../css/InsideShopHome.css';
-import galleryImage from '../../../assets/barbershop3.jpeg';
+import interiorImageOne from '../../../../assets/barbershop-interior-1.jpeg';
+import interiorImageTwo from '../../../../assets/barbershop-interior-2.webp';
+import exteriorImageOne from '../../../../assets/barbershop-exterior-1.png';
 import { Link } from 'react-router-dom'
 
 const galleryImages = [
@@ -7,16 +9,19 @@ const galleryImages = [
         id: 1,
         objectPosition: 'center center',
         alt: 'Barbershop interior view 1',
+        assetImage: interiorImageOne
     },
     {
         id: 2,
         objectPosition: 'center top',
-        alt: 'Barbershop interior view 2',
+        alt: 'Barbershop exterior view 1',
+        assetImage: interiorImageTwo
     },
     {
         id: 3,
         objectPosition: 'center bottom',
-        alt: 'Barbershop interior view 3',
+        alt: 'Barbershop interior view 2',
+        assetImage: exteriorImageOne
     },
 ];
 
@@ -39,7 +44,7 @@ export function InsideShopHome() {
                         <article key={card.id} className="insideShopHome-card">
                             <img
                                 className="insideShopHome-thumb"
-                                src={galleryImage}
+                                src={card.assetImage}
                                 style={{ objectPosition: card.objectPosition }}
                                 alt={card.alt}
                             />

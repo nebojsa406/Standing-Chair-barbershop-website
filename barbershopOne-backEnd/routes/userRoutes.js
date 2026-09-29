@@ -37,6 +37,7 @@ router.post("/login", loginLimiter, async (req, res) => {
 
         res.status(200).json({ accessToken, user: userFiltered });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -52,6 +53,7 @@ router.post("/logout", async (req, res) => {
         res.clearCookie("refreshToken");
         res.status(200).json({ message: "session removed!" });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });
@@ -70,6 +72,7 @@ router.post("/refresh", authenticateRefreshToken, async (req, res) => {
             }
         });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "server error" });
     }
 });

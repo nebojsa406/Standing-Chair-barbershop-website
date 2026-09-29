@@ -8,6 +8,7 @@
     --cream: #F1E8DA;
     --taupe: #9C8C79;
     --hair: rgba(199, 154, 92, 0.438);
+    --pending-red: #E34B4B;
     --maxw: 1180px;
 }
 
@@ -52,6 +53,12 @@
     color: var(--ink);
     background: var(--brass);
     border-color: var(--brass);
+}
+
+.filter-btn:disabled,
+.filter-btn-active:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .galleryPage-header-wrap,
@@ -149,6 +156,35 @@
     gap: 8px;
 }
 
+.gallery-category-label {
+    align-self: center;
+    margin: 0 4px 0 0;
+    color: var(--taupe);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.gallery-category-select {
+    min-height: 38px;
+    padding: 0 10px;
+    color: var(--cream);
+    background: var(--ink);
+    border: 1px solid var(--brass-dim);
+    border-radius: 2px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+}
+
+.gallery-category-select:focus-visible {
+    border-color: var(--brass-bright);
+    outline: 2px solid var(--brass-bright);
+    outline-offset: 2px;
+}
+
 .gallery-selected-photo {
     display: flex;
     width: 100%;
@@ -206,13 +242,19 @@
     border: 2px solid var(--brass-bright);
 }
 
+.gallery-photo-thumbnail.is-new,
+.gallery-photo-thumbnail.is-new.is-selected {
+    border: 2px dashed var(--pending-red);
+}
+
 .gallery-photo-thumbnail:focus-visible {
     outline: 2px solid var(--brass-bright);
     outline-offset: 2px;
 }
 
 .gallery-add-btn,
-.gallery-submit-btn {
+.gallery-submit-btn,
+.gallery-delete-btn {
     font-family: 'Space Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -224,14 +266,28 @@
     cursor: pointer;
     transition: background-color .2s ease, color .2s ease;
 }
+.gallery-delete-btn {
+    background-color: #c7715c;
+}
 
 .gallery-add-btn:hover,
 .gallery-add-btn:focus-visible,
+.gallery-delete-btn:hover,
+.gallery-delete-btn:focus-visible,
 .gallery-submit-btn:hover,
 .gallery-submit-btn:focus-visible {
     color: var(--cream);
     background: var(--walnut);
     outline: none;
+}
+
+.gallery-submit-btn:disabled,
+.gallery-submit-btn:disabled:hover {
+    color: var(--taupe);
+    background: var(--walnut);
+    border-color: var(--brass-dim);
+    cursor: not-allowed;
+    opacity: 0.55;
 }
 
 .gallery-upload-zone {
@@ -374,5 +430,16 @@
 
     .galleryPage-label {
         font-size: 11px;
+    }
+
+    .gallery-admin-actions {
+        left: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .gallery-category-label {
+        flex-basis: 100%;
+        text-align: right;
     }
 }

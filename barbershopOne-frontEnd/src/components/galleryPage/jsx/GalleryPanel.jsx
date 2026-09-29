@@ -2,10 +2,9 @@ import { useState } from "react";
 
 export function GalleryPanel({ gallery = [] }) {
     const [selectedPhoto, setSelectedPhoto] = useState(null);
-    const photoUrls = gallery.flatMap((photo) => {
-        const urls = Array.isArray(photo.imageUrls) ? photo.imageUrls : [photo.imageUrls];
-        return urls.filter((url) => typeof url === "string" && url.length > 0);
-    });
+    
+    const photoUrls = gallery.flatMap((photo) => { return photo.imageUrl } );
+
     const displayedPhoto = photoUrls.includes(selectedPhoto) ? selectedPhoto : photoUrls[0];
 
     return (
